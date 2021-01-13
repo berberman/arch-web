@@ -1,0 +1,545 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span id="%24maxtag_BTum9WxCv9tI5tVCohz7vt"><span id="%24tag2con_BTum9WxCv9tI5tVCohz7vt"><span id="%24con2tag_BTum9WxCv9tI5tVCohz7vt"></span></span></span><span class="hs-pragma">{-# LANGUAGE AllowAmbiguousTypes #-}</span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Web.ArchLinux.API</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-4"></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">FromJSON</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Result</span></span><span> </span><span class="hs-special">(</span><span class="hs-glyph">..</span><span class="hs-special">)</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">Value</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">fromJSON</span></span><span class="hs-special">)</span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Proxy</span></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Text</span></span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.Text</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">T</span></span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Generics</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Network.HTTP.Client</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Manager</span></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Network.HTTP.Types</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">http11</span></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Servant.Client</span></span><span>
+</span><span id="line-13"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Servant.Client.Core</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">throwClientError</span></span><span class="hs-special">)</span><span>
+</span><span id="line-14"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html"><span class="hs-identifier">Web.ArchLinux.Types</span></a></span><span>
+</span><span id="line-15"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.API.html"><span class="hs-identifier">Web.ArchLinux.Types.API</span></a></span><span>
+</span><span id="line-16"></span><span>
+</span><span id="line-17"></span><span class="hs-keyword">data</span><span> </span><span id="APIType"><span class="annot"><a href="Web.ArchLinux.API.html#APIType"><span class="hs-identifier hs-var">APIType</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="ArchLinux"><span class="annot"><a href="Web.ArchLinux.API.html#ArchLinux"><span class="hs-identifier hs-var">ArchLinux</span></a></span></span><span> </span><span class="hs-glyph">|</span><span> </span><span id="Aur"><span class="annot"><a href="Web.ArchLinux.API.html#Aur"><span class="hs-identifier hs-var">Aur</span></a></span></span><span>
+</span><span id="line-18"></span><span>
+</span><span id="line-19"></span><span class="hs-keyword">newtype</span><span> </span><span id="APIClient"><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-var">APIClient</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679515341"><span class="annot"><a href="#local-6989586621679515341"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIType"><span class="hs-identifier hs-type">APIType</span></a></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679515342"><span class="annot"><a href="#local-6989586621679515342"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="APIClient"><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-var">APIClient</span></a></span></span><span> </span><span class="hs-special">{</span><span id="unWrapClientM"><span class="annot"><span class="annottext">APIClient k a -&gt; ClientM a
+</span><a href="Web.ArchLinux.API.html#unWrapClientM"><span class="hs-identifier hs-var hs-var">unWrapClientM</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">ClientM</span></span><span> </span><span class="annot"><a href="#local-6989586621679515342"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">}</span><span>
+</span><span id="line-20"></span><span>
+</span><span id="line-21"></span><span class="hs-keyword">class</span><span> </span><span id="HasBaseUrl"><span class="annot"><a href="Web.ArchLinux.API.html#HasBaseUrl"><span class="hs-identifier hs-var">HasBaseUrl</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679515362"><span class="annot"><a href="#local-6989586621679515362"><span class="hs-identifier hs-type">k</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIType"><span class="hs-identifier hs-type">APIType</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-22"></span><span>  </span><span id="getBaseUrl"><span class="annot"><a href="Web.ArchLinux.API.html#getBaseUrl"><span class="hs-identifier hs-type">getBaseUrl</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">BaseUrl</span></span><span>
+</span><span id="line-23"></span><span>
+</span><span id="line-24"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#HasBaseUrl"><span class="hs-identifier hs-type">HasBaseUrl</span></a></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Web.ArchLinux.API.html#ArchLinux"><span class="hs-identifier hs-type">ArchLinux</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-25"></span><span>  </span><span id="local-6989586621679515282"><span class="annot"><span class="annottext">getBaseUrl :: BaseUrl
+</span><a href="#local-6989586621679515282"><span class="hs-identifier hs-var hs-var hs-var hs-var">getBaseUrl</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Scheme -&gt; String -&gt; Int -&gt; String -&gt; BaseUrl
+</span><span class="hs-identifier hs-var">BaseUrl</span></span><span> </span><span class="annot"><span class="annottext">Scheme
+</span><span class="hs-identifier hs-var">Https</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;www.archlinux.org&quot;</span></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">443</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&quot;</span></span><span>
+</span><span id="line-26"></span><span>
+</span><span id="line-27"></span><span class="hs-keyword">instance</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#HasBaseUrl"><span class="hs-identifier hs-type">HasBaseUrl</span></a></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Web.ArchLinux.API.html#Aur"><span class="hs-identifier hs-type">Aur</span></a></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-28"></span><span>  </span><span id="local-6989586621679515278"><span class="annot"><span class="annottext">getBaseUrl :: BaseUrl
+</span><a href="#local-6989586621679515278"><span class="hs-identifier hs-var hs-var hs-var hs-var">getBaseUrl</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Scheme -&gt; String -&gt; Int -&gt; String -&gt; BaseUrl
+</span><span class="hs-identifier hs-var">BaseUrl</span></span><span> </span><span class="annot"><span class="annottext">Scheme
+</span><span class="hs-identifier hs-var">Https</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;aur.archlinux.org&quot;</span></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">443</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;&quot;</span></span><span>
+</span><span id="line-29"></span><span>
+</span><span id="line-30"></span><span class="hs-comment">-----------------------------------------------------------------------------</span><span>
+</span><span id="line-31"></span><span>
+</span><span id="line-32"></span><span id="local-6989586621679515276"><span id="local-6989586621679515277"></span></span><span class="hs-keyword">data</span><span> </span><span id="SearchOptions"><span class="annot"><a href="Web.ArchLinux.API.html#SearchOptions"><span class="hs-identifier hs-var">SearchOptions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="SearchOptions"><span class="annot"><a href="Web.ArchLinux.API.html#SearchOptions"><span class="hs-identifier hs-var">SearchOptions</span></a></span></span><span>
+</span><span id="line-33"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="nameOrDescription"><span class="annot"><span class="annottext">SearchOptions -&gt; Maybe Text
+</span><a href="Web.ArchLinux.API.html#nameOrDescription"><span class="hs-identifier hs-var hs-var">nameOrDescription</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
+</span><span id="line-34"></span><span>    </span><span id="exactName"><span class="annot"><span class="annottext">SearchOptions -&gt; Maybe Text
+</span><a href="Web.ArchLinux.API.html#exactName"><span class="hs-identifier hs-var hs-var">exactName</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
+</span><span id="line-35"></span><span>    </span><span id="description"><span class="annot"><span class="annottext">SearchOptions -&gt; Maybe Text
+</span><a href="Web.ArchLinux.API.html#description"><span class="hs-identifier hs-var hs-var">description</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
+</span><span id="line-36"></span><span>    </span><span id="repositories"><span class="annot"><span class="annottext">SearchOptions -&gt; [Repo]
+</span><a href="Web.ArchLinux.API.html#repositories"><span class="hs-identifier hs-var hs-var">repositories</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Web.ArchLinux.Types.html#Repo"><span class="hs-identifier hs-type">Repo</span></a></span><span class="hs-special">]</span><span class="hs-special">,</span><span>
+</span><span id="line-37"></span><span>    </span><span id="architectures"><span class="annot"><span class="annottext">SearchOptions -&gt; [Arch]
+</span><a href="Web.ArchLinux.API.html#architectures"><span class="hs-identifier hs-var hs-var">architectures</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Web.ArchLinux.Types.html#Arch"><span class="hs-identifier hs-type">Arch</span></a></span><span class="hs-special">]</span><span class="hs-special">,</span><span>
+</span><span id="line-38"></span><span>    </span><span id="targetMaintianer"><span class="annot"><span class="annottext">SearchOptions -&gt; Maybe Text
+</span><a href="Web.ArchLinux.API.html#targetMaintianer"><span class="hs-identifier hs-var hs-var">targetMaintianer</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
+</span><span id="line-39"></span><span>    </span><span id="targetPackager"><span class="annot"><span class="annottext">SearchOptions -&gt; Maybe Text
+</span><a href="Web.ArchLinux.API.html#targetPackager"><span class="hs-identifier hs-var hs-var">targetPackager</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
+</span><span id="line-40"></span><span>    </span><span id="isFlagged"><span class="annot"><span class="annottext">SearchOptions -&gt; Maybe Flagged
+</span><a href="Web.ArchLinux.API.html#isFlagged"><span class="hs-identifier hs-var hs-var">isFlagged</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#Flagged"><span class="hs-identifier hs-type">Flagged</span></a></span><span>
+</span><span id="line-41"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-42"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(forall x. SearchOptions -&gt; Rep SearchOptions x)
+-&gt; (forall x. Rep SearchOptions x -&gt; SearchOptions)
+-&gt; Generic SearchOptions
+forall x. Rep SearchOptions x -&gt; SearchOptions
+forall x. SearchOptions -&gt; Rep SearchOptions x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep SearchOptions x -&gt; SearchOptions
+$cfrom :: forall x. SearchOptions -&gt; Rep SearchOptions x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679515260"><span id="local-6989586621679515262"><span class="annot"><span class="annottext">SearchOptions -&gt; SearchOptions -&gt; Bool
+(SearchOptions -&gt; SearchOptions -&gt; Bool)
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; Bool) -&gt; Eq SearchOptions
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: SearchOptions -&gt; SearchOptions -&gt; Bool
+$c/= :: SearchOptions -&gt; SearchOptions -&gt; Bool
+== :: SearchOptions -&gt; SearchOptions -&gt; Bool
+$c== :: SearchOptions -&gt; SearchOptions -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679515244"><span id="local-6989586621679515246"><span id="local-6989586621679515248"><span id="local-6989586621679515250"><span id="local-6989586621679515252"><span id="local-6989586621679515254"><span id="local-6989586621679515256"><span class="annot"><span class="annottext">Eq SearchOptions
+Eq SearchOptions
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; Ordering)
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; Bool)
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; Bool)
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; Bool)
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; Bool)
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; SearchOptions)
+-&gt; (SearchOptions -&gt; SearchOptions -&gt; SearchOptions)
+-&gt; Ord SearchOptions
+SearchOptions -&gt; SearchOptions -&gt; Bool
+SearchOptions -&gt; SearchOptions -&gt; Ordering
+SearchOptions -&gt; SearchOptions -&gt; SearchOptions
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+min :: SearchOptions -&gt; SearchOptions -&gt; SearchOptions
+$cmin :: SearchOptions -&gt; SearchOptions -&gt; SearchOptions
+max :: SearchOptions -&gt; SearchOptions -&gt; SearchOptions
+$cmax :: SearchOptions -&gt; SearchOptions -&gt; SearchOptions
+&gt;= :: SearchOptions -&gt; SearchOptions -&gt; Bool
+$c&gt;= :: SearchOptions -&gt; SearchOptions -&gt; Bool
+&gt; :: SearchOptions -&gt; SearchOptions -&gt; Bool
+$c&gt; :: SearchOptions -&gt; SearchOptions -&gt; Bool
+&lt;= :: SearchOptions -&gt; SearchOptions -&gt; Bool
+$c&lt;= :: SearchOptions -&gt; SearchOptions -&gt; Bool
+&lt; :: SearchOptions -&gt; SearchOptions -&gt; Bool
+$c&lt; :: SearchOptions -&gt; SearchOptions -&gt; Bool
+compare :: SearchOptions -&gt; SearchOptions -&gt; Ordering
+$ccompare :: SearchOptions -&gt; SearchOptions -&gt; Ordering
+$cp1Ord :: Eq SearchOptions
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679515237"><span id="local-6989586621679515239"><span id="local-6989586621679515241"><span class="annot"><span class="annottext">Int -&gt; SearchOptions -&gt; ShowS
+[SearchOptions] -&gt; ShowS
+SearchOptions -&gt; String
+(Int -&gt; SearchOptions -&gt; ShowS)
+-&gt; (SearchOptions -&gt; String)
+-&gt; ([SearchOptions] -&gt; ShowS)
+-&gt; Show SearchOptions
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [SearchOptions] -&gt; ShowS
+$cshowList :: [SearchOptions] -&gt; ShowS
+show :: SearchOptions -&gt; String
+$cshow :: SearchOptions -&gt; String
+showsPrec :: Int -&gt; SearchOptions -&gt; ShowS
+$cshowsPrec :: Int -&gt; SearchOptions -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-43"></span><span>
+</span><span id="line-44"></span><span class="annot"><a href="Web.ArchLinux.API.html#emptySearchOptions"><span class="hs-identifier hs-type">emptySearchOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#SearchOptions"><span class="hs-identifier hs-type">SearchOptions</span></a></span><span>
+</span><span id="line-45"></span><span id="emptySearchOptions"><span class="annot"><span class="annottext">emptySearchOptions :: SearchOptions
+</span><a href="Web.ArchLinux.API.html#emptySearchOptions"><span class="hs-identifier hs-var hs-var">emptySearchOptions</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Maybe Text
+-&gt; Maybe Text
+-&gt; Maybe Text
+-&gt; [Repo]
+-&gt; [Arch]
+-&gt; Maybe Text
+-&gt; Maybe Text
+-&gt; Maybe Flagged
+-&gt; SearchOptions
+</span><a href="Web.ArchLinux.API.html#SearchOptions"><span class="hs-identifier hs-var">SearchOptions</span></a></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">Maybe Text
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">Maybe Flagged
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span>
+</span><span id="line-46"></span><span>
+</span><span id="line-47"></span><span class="annot"><a href="Web.ArchLinux.API.html#getPackageDetails"><span class="hs-identifier hs-type">getPackageDetails</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#Repo"><span class="hs-identifier hs-type">Repo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#Arch"><span class="hs-identifier hs-type">Arch</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-type">APIClient</span></a></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Web.ArchLinux.API.html#ArchLinux"><span class="hs-identifier hs-type">ArchLinux</span></a></span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#PackageInformation"><span class="hs-identifier hs-type">PackageInformation</span></a></span><span>
+</span><span id="line-48"></span><span id="getPackageDetails"><span class="annot"><span class="annottext">getPackageDetails :: Repo -&gt; Arch -&gt; Text -&gt; APIClient 'ArchLinux PackageInformation
+</span><a href="Web.ArchLinux.API.html#getPackageDetails"><span class="hs-identifier hs-var hs-var">getPackageDetails</span></a></span></span><span> </span><span id="local-6989586621679515233"><span class="annot"><span class="annottext">Repo
+</span><a href="#local-6989586621679515233"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679515232"><span class="annot"><span class="annottext">Arch
+</span><a href="#local-6989586621679515232"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span id="local-6989586621679515231"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515231"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ClientM PackageInformation
+-&gt; APIClient 'ArchLinux PackageInformation
+forall (k :: APIType) a. ClientM a -&gt; APIClient k a
+</span><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-var">APIClient</span></a></span><span> </span><span class="annot"><span class="annottext">(ClientM PackageInformation
+ -&gt; APIClient 'ArchLinux PackageInformation)
+-&gt; ClientM PackageInformation
+-&gt; APIClient 'ArchLinux PackageInformation
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Proxy GetPackageDetails
+-&gt; Repo -&gt; Arch -&gt; Text -&gt; ClientM PackageInformation
+forall api.
+HasClient ClientM api =&gt;
+Proxy api -&gt; Client ClientM api
+</span><span class="hs-identifier hs-var">client</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy GetPackageDetails
+forall k (t :: k). Proxy t
+</span><span class="hs-identifier hs-var">Proxy</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="Web.ArchLinux.Types.API.html#GetPackageDetails"><span class="hs-identifier hs-type">GetPackageDetails</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Repo
+</span><a href="#local-6989586621679515233"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">Arch
+</span><a href="#local-6989586621679515232"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515231"><span class="hs-identifier hs-var">p</span></a></span><span>
+</span><span id="line-49"></span><span>
+</span><span id="line-50"></span><span class="annot"><a href="Web.ArchLinux.API.html#getPackageFiles"><span class="hs-identifier hs-type">getPackageFiles</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#Repo"><span class="hs-identifier hs-type">Repo</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#Arch"><span class="hs-identifier hs-type">Arch</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-type">APIClient</span></a></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Web.ArchLinux.API.html#ArchLinux"><span class="hs-identifier hs-type">ArchLinux</span></a></span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#PackageFiles"><span class="hs-identifier hs-type">PackageFiles</span></a></span><span>
+</span><span id="line-51"></span><span id="getPackageFiles"><span class="annot"><span class="annottext">getPackageFiles :: Repo -&gt; Arch -&gt; Text -&gt; APIClient 'ArchLinux PackageFiles
+</span><a href="Web.ArchLinux.API.html#getPackageFiles"><span class="hs-identifier hs-var hs-var">getPackageFiles</span></a></span></span><span> </span><span id="local-6989586621679515227"><span class="annot"><span class="annottext">Repo
+</span><a href="#local-6989586621679515227"><span class="hs-identifier hs-var">r</span></a></span></span><span> </span><span id="local-6989586621679515226"><span class="annot"><span class="annottext">Arch
+</span><a href="#local-6989586621679515226"><span class="hs-identifier hs-var">a</span></a></span></span><span> </span><span id="local-6989586621679515225"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515225"><span class="hs-identifier hs-var">p</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ClientM PackageFiles -&gt; APIClient 'ArchLinux PackageFiles
+forall (k :: APIType) a. ClientM a -&gt; APIClient k a
+</span><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-var">APIClient</span></a></span><span> </span><span class="annot"><span class="annottext">(ClientM PackageFiles -&gt; APIClient 'ArchLinux PackageFiles)
+-&gt; ClientM PackageFiles -&gt; APIClient 'ArchLinux PackageFiles
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Proxy GetPackageFiles
+-&gt; Repo -&gt; Arch -&gt; Text -&gt; ClientM PackageFiles
+forall api.
+HasClient ClientM api =&gt;
+Proxy api -&gt; Client ClientM api
+</span><span class="hs-identifier hs-var">client</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy GetPackageFiles
+forall k (t :: k). Proxy t
+</span><span class="hs-identifier hs-var">Proxy</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="Web.ArchLinux.Types.API.html#GetPackageFiles"><span class="hs-identifier hs-type">GetPackageFiles</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Repo
+</span><a href="#local-6989586621679515227"><span class="hs-identifier hs-var">r</span></a></span><span> </span><span class="annot"><span class="annottext">Arch
+</span><a href="#local-6989586621679515226"><span class="hs-identifier hs-var">a</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515225"><span class="hs-identifier hs-var">p</span></a></span><span>
+</span><span id="line-52"></span><span>
+</span><span id="line-53"></span><span class="annot"><a href="Web.ArchLinux.API.html#searchPackage"><span class="hs-identifier hs-type">searchPackage</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#SearchOptions"><span class="hs-identifier hs-type">SearchOptions</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-type">APIClient</span></a></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Web.ArchLinux.API.html#ArchLinux"><span class="hs-identifier hs-type">ArchLinux</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Types.html#ArchLinuxResponse"><span class="hs-identifier hs-type">ArchLinuxResponse</span></a></span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#PackageInformation"><span class="hs-identifier hs-type">PackageInformation</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-54"></span><span id="searchPackage"><span class="annot"><span class="annottext">searchPackage :: SearchOptions
+-&gt; APIClient 'ArchLinux (ArchLinuxResponse PackageInformation)
+</span><a href="Web.ArchLinux.API.html#searchPackage"><span class="hs-identifier hs-var hs-var">searchPackage</span></a></span></span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#SearchOptions"><span class="hs-identifier hs-type">SearchOptions</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679515216"><span id="local-6989586621679515217"><span id="local-6989586621679515218"><span id="local-6989586621679515219"><span id="local-6989586621679515220"><span id="local-6989586621679515221"><span id="local-6989586621679515222"><span id="local-6989586621679515223"><span class="annot"><span class="annottext">[Arch]
+[Repo]
+Maybe Text
+Maybe Flagged
+isFlagged :: Maybe Flagged
+targetPackager :: Maybe Text
+targetMaintianer :: Maybe Text
+architectures :: [Arch]
+repositories :: [Repo]
+description :: Maybe Text
+exactName :: Maybe Text
+nameOrDescription :: Maybe Text
+isFlagged :: SearchOptions -&gt; Maybe Flagged
+targetPackager :: SearchOptions -&gt; Maybe Text
+targetMaintianer :: SearchOptions -&gt; Maybe Text
+architectures :: SearchOptions -&gt; [Arch]
+repositories :: SearchOptions -&gt; [Repo]
+description :: SearchOptions -&gt; Maybe Text
+exactName :: SearchOptions -&gt; Maybe Text
+nameOrDescription :: SearchOptions -&gt; Maybe Text
+</span><a href="#local-6989586621679515216"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span>
+</span><span id="line-55"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span id="local-6989586621679515215"><span class="annot"><span class="annottext">f :: Client ClientM SearchPackage
+</span><a href="#local-6989586621679515215"><span class="hs-identifier hs-var hs-var">f</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Proxy SearchPackage -&gt; Client ClientM SearchPackage
+forall api.
+HasClient ClientM api =&gt;
+Proxy api -&gt; Client ClientM api
+</span><span class="hs-identifier hs-var">client</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy SearchPackage
+forall k (t :: k). Proxy t
+</span><span class="hs-identifier hs-var">Proxy</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="Web.ArchLinux.Types.API.html#SearchPackage"><span class="hs-identifier hs-type">SearchPackage</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-56"></span><span>   </span><span class="hs-keyword">in</span><span> </span><span class="annot"><span class="annottext">ClientM (ArchLinuxResponse PackageInformation)
+-&gt; APIClient 'ArchLinux (ArchLinuxResponse PackageInformation)
+forall (k :: APIType) a. ClientM a -&gt; APIClient k a
+</span><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-var">APIClient</span></a></span><span> </span><span class="annot"><span class="annottext">(ClientM (ArchLinuxResponse PackageInformation)
+ -&gt; APIClient 'ArchLinux (ArchLinuxResponse PackageInformation))
+-&gt; ClientM (ArchLinuxResponse PackageInformation)
+-&gt; APIClient 'ArchLinux (ArchLinuxResponse PackageInformation)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span>
+</span><span id="line-57"></span><span>        </span><span class="annot"><span class="annottext">Maybe Text
+-&gt; Maybe Text
+-&gt; Maybe Text
+-&gt; [Repo]
+-&gt; [Arch]
+-&gt; Maybe Text
+-&gt; Maybe Text
+-&gt; Maybe Flagged
+-&gt; ClientM (ArchLinuxResponse PackageInformation)
+</span><a href="#local-6989586621679515215"><span class="hs-identifier hs-var">f</span></a></span><span>
+</span><span id="line-58"></span><span>          </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679515223"><span class="hs-identifier hs-var">nameOrDescription</span></a></span><span>
+</span><span id="line-59"></span><span>          </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679515222"><span class="hs-identifier hs-var">exactName</span></a></span><span>
+</span><span id="line-60"></span><span>          </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679515221"><span class="hs-identifier hs-var">description</span></a></span><span>
+</span><span id="line-61"></span><span>          </span><span class="annot"><span class="annottext">[Repo]
+</span><a href="#local-6989586621679515220"><span class="hs-identifier hs-var">repositories</span></a></span><span>
+</span><span id="line-62"></span><span>          </span><span class="annot"><span class="annottext">[Arch]
+</span><a href="#local-6989586621679515219"><span class="hs-identifier hs-var">architectures</span></a></span><span>
+</span><span id="line-63"></span><span>          </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679515218"><span class="hs-identifier hs-var">targetMaintianer</span></a></span><span>
+</span><span id="line-64"></span><span>          </span><span class="annot"><span class="annottext">Maybe Text
+</span><a href="#local-6989586621679515217"><span class="hs-identifier hs-var">targetPackager</span></a></span><span>
+</span><span id="line-65"></span><span>          </span><span class="annot"><span class="annottext">Maybe Flagged
+</span><a href="#local-6989586621679515216"><span class="hs-identifier hs-var">isFlagged</span></a></span><span>
+</span><span id="line-66"></span><span>
+</span><span id="line-67"></span><span class="hs-comment">-----------------------------------------------------------------------------</span><span>
+</span><span id="line-68"></span><span>
+</span><span id="line-69"></span><span id="local-6989586621679515213"><span id="local-6989586621679515214"></span></span><span class="hs-keyword">data</span><span> </span><span id="AurSearchType"><span class="annot"><a href="Web.ArchLinux.API.html#AurSearchType"><span class="hs-identifier hs-var">AurSearchType</span></a></span></span><span>
+</span><span id="line-70"></span><span>  </span><span class="hs-glyph">=</span><span> </span><span id="ByName"><span class="annot"><a href="Web.ArchLinux.API.html#ByName"><span class="hs-identifier hs-var">ByName</span></a></span></span><span>
+</span><span id="line-71"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="ByNameOrDesc"><span class="annot"><a href="Web.ArchLinux.API.html#ByNameOrDesc"><span class="hs-identifier hs-var">ByNameOrDesc</span></a></span></span><span>
+</span><span id="line-72"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="ByMaintainer"><span class="annot"><a href="Web.ArchLinux.API.html#ByMaintainer"><span class="hs-identifier hs-var">ByMaintainer</span></a></span></span><span>
+</span><span id="line-73"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="ByDepends"><span class="annot"><a href="Web.ArchLinux.API.html#ByDepends"><span class="hs-identifier hs-var">ByDepends</span></a></span></span><span>
+</span><span id="line-74"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="ByMakedepends"><span class="annot"><a href="Web.ArchLinux.API.html#ByMakedepends"><span class="hs-identifier hs-var">ByMakedepends</span></a></span></span><span>
+</span><span id="line-75"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="ByOptdepends"><span class="annot"><a href="Web.ArchLinux.API.html#ByOptdepends"><span class="hs-identifier hs-var">ByOptdepends</span></a></span></span><span>
+</span><span id="line-76"></span><span>  </span><span class="hs-glyph">|</span><span> </span><span id="ByCheckdepends"><span class="annot"><a href="Web.ArchLinux.API.html#ByCheckdepends"><span class="hs-identifier hs-var">ByCheckdepends</span></a></span></span><span>
+</span><span id="line-77"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(forall x. AurSearchType -&gt; Rep AurSearchType x)
+-&gt; (forall x. Rep AurSearchType x -&gt; AurSearchType)
+-&gt; Generic AurSearchType
+forall x. Rep AurSearchType x -&gt; AurSearchType
+forall x. AurSearchType -&gt; Rep AurSearchType x
+forall a.
+(forall x. a -&gt; Rep a x) -&gt; (forall x. Rep a x -&gt; a) -&gt; Generic a
+$cto :: forall x. Rep AurSearchType x -&gt; AurSearchType
+$cfrom :: forall x. AurSearchType -&gt; Rep AurSearchType x
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679515200"><span id="local-6989586621679515202"><span class="annot"><span class="annottext">AurSearchType -&gt; AurSearchType -&gt; Bool
+(AurSearchType -&gt; AurSearchType -&gt; Bool)
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; Bool) -&gt; Eq AurSearchType
+forall a. (a -&gt; a -&gt; Bool) -&gt; (a -&gt; a -&gt; Bool) -&gt; Eq a
+/= :: AurSearchType -&gt; AurSearchType -&gt; Bool
+$c/= :: AurSearchType -&gt; AurSearchType -&gt; Bool
+== :: AurSearchType -&gt; AurSearchType -&gt; Bool
+$c== :: AurSearchType -&gt; AurSearchType -&gt; Bool
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var">Eq</span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679515185"><span id="local-6989586621679515187"><span id="local-6989586621679515189"><span id="local-6989586621679515191"><span id="local-6989586621679515193"><span id="local-6989586621679515195"><span id="local-6989586621679515197"><span class="annot"><span class="annottext">Eq AurSearchType
+Eq AurSearchType
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; Ordering)
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; Bool)
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; Bool)
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; Bool)
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; Bool)
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; AurSearchType)
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; AurSearchType)
+-&gt; Ord AurSearchType
+AurSearchType -&gt; AurSearchType -&gt; Bool
+AurSearchType -&gt; AurSearchType -&gt; Ordering
+AurSearchType -&gt; AurSearchType -&gt; AurSearchType
+forall a.
+Eq a
+-&gt; (a -&gt; a -&gt; Ordering)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; Bool)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; (a -&gt; a -&gt; a)
+-&gt; Ord a
+min :: AurSearchType -&gt; AurSearchType -&gt; AurSearchType
+$cmin :: AurSearchType -&gt; AurSearchType -&gt; AurSearchType
+max :: AurSearchType -&gt; AurSearchType -&gt; AurSearchType
+$cmax :: AurSearchType -&gt; AurSearchType -&gt; AurSearchType
+&gt;= :: AurSearchType -&gt; AurSearchType -&gt; Bool
+$c&gt;= :: AurSearchType -&gt; AurSearchType -&gt; Bool
+&gt; :: AurSearchType -&gt; AurSearchType -&gt; Bool
+$c&gt; :: AurSearchType -&gt; AurSearchType -&gt; Bool
+&lt;= :: AurSearchType -&gt; AurSearchType -&gt; Bool
+$c&lt;= :: AurSearchType -&gt; AurSearchType -&gt; Bool
+&lt; :: AurSearchType -&gt; AurSearchType -&gt; Bool
+$c&lt; :: AurSearchType -&gt; AurSearchType -&gt; Bool
+compare :: AurSearchType -&gt; AurSearchType -&gt; Ordering
+$ccompare :: AurSearchType -&gt; AurSearchType -&gt; Ordering
+$cp1Ord :: Eq AurSearchType
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Ord</span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679515169"><span id="local-6989586621679515171"><span id="local-6989586621679515173"><span id="local-6989586621679515175"><span id="local-6989586621679515177"><span id="local-6989586621679515179"><span id="local-6989586621679515181"><span id="local-6989586621679515183"><span class="annot"><span class="annottext">Int -&gt; AurSearchType
+AurSearchType -&gt; Int
+AurSearchType -&gt; [AurSearchType]
+AurSearchType -&gt; AurSearchType
+AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+AurSearchType -&gt; AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+(AurSearchType -&gt; AurSearchType)
+-&gt; (AurSearchType -&gt; AurSearchType)
+-&gt; (Int -&gt; AurSearchType)
+-&gt; (AurSearchType -&gt; Int)
+-&gt; (AurSearchType -&gt; [AurSearchType])
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; [AurSearchType])
+-&gt; (AurSearchType -&gt; AurSearchType -&gt; [AurSearchType])
+-&gt; (AurSearchType
+    -&gt; AurSearchType -&gt; AurSearchType -&gt; [AurSearchType])
+-&gt; Enum AurSearchType
+forall a.
+(a -&gt; a)
+-&gt; (a -&gt; a)
+-&gt; (Int -&gt; a)
+-&gt; (a -&gt; Int)
+-&gt; (a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; [a])
+-&gt; (a -&gt; a -&gt; a -&gt; [a])
+-&gt; Enum a
+enumFromThenTo :: AurSearchType -&gt; AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+$cenumFromThenTo :: AurSearchType -&gt; AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+enumFromTo :: AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+$cenumFromTo :: AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+enumFromThen :: AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+$cenumFromThen :: AurSearchType -&gt; AurSearchType -&gt; [AurSearchType]
+enumFrom :: AurSearchType -&gt; [AurSearchType]
+$cenumFrom :: AurSearchType -&gt; [AurSearchType]
+fromEnum :: AurSearchType -&gt; Int
+$cfromEnum :: AurSearchType -&gt; Int
+toEnum :: Int -&gt; AurSearchType
+$ctoEnum :: Int -&gt; AurSearchType
+pred :: AurSearchType -&gt; AurSearchType
+$cpred :: AurSearchType -&gt; AurSearchType
+succ :: AurSearchType -&gt; AurSearchType
+$csucc :: AurSearchType -&gt; AurSearchType
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Enum</span></span></span></span></span></span></span></span></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679515162"><span id="local-6989586621679515164"><span id="local-6989586621679515166"><span class="annot"><span class="annottext">Int -&gt; AurSearchType -&gt; ShowS
+[AurSearchType] -&gt; ShowS
+AurSearchType -&gt; String
+(Int -&gt; AurSearchType -&gt; ShowS)
+-&gt; (AurSearchType -&gt; String)
+-&gt; ([AurSearchType] -&gt; ShowS)
+-&gt; Show AurSearchType
+forall a.
+(Int -&gt; a -&gt; ShowS) -&gt; (a -&gt; String) -&gt; ([a] -&gt; ShowS) -&gt; Show a
+showList :: [AurSearchType] -&gt; ShowS
+$cshowList :: [AurSearchType] -&gt; ShowS
+show :: AurSearchType -&gt; String
+$cshow :: AurSearchType -&gt; String
+showsPrec :: Int -&gt; AurSearchType -&gt; ShowS
+$cshowsPrec :: Int -&gt; AurSearchType -&gt; ShowS
+</span><span class="hs-identifier hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">Show</span></span></span></span></span><span class="hs-special">)</span><span>
+</span><span id="line-78"></span><span>
+</span><span id="line-79"></span><span class="annot"><a href="Web.ArchLinux.API.html#searchTypeToValue"><span class="hs-identifier hs-type">searchTypeToValue</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#AurSearchType"><span class="hs-identifier hs-type">AurSearchType</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
+</span><span id="line-80"></span><span id="searchTypeToValue"><span class="annot"><span class="annottext">searchTypeToValue :: AurSearchType -&gt; Text
+</span><a href="Web.ArchLinux.API.html#searchTypeToValue"><span class="hs-identifier hs-var hs-var">searchTypeToValue</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-glyph">\</span><span class="hs-glyph">case</span><span>
+</span><span id="line-81"></span><span>  </span><span class="annot"><span class="annottext">AurSearchType
+</span><a href="Web.ArchLinux.API.html#ByName"><span class="hs-identifier hs-var">ByName</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;name&quot;</span></span><span>
+</span><span id="line-82"></span><span>  </span><span class="annot"><span class="annottext">AurSearchType
+</span><a href="Web.ArchLinux.API.html#ByNameOrDesc"><span class="hs-identifier hs-var">ByNameOrDesc</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;name-desc&quot;</span></span><span>
+</span><span id="line-83"></span><span>  </span><span class="annot"><span class="annottext">AurSearchType
+</span><a href="Web.ArchLinux.API.html#ByMaintainer"><span class="hs-identifier hs-var">ByMaintainer</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;maintainer&quot;</span></span><span>
+</span><span id="line-84"></span><span>  </span><span class="annot"><span class="annottext">AurSearchType
+</span><a href="Web.ArchLinux.API.html#ByDepends"><span class="hs-identifier hs-var">ByDepends</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;depends&quot;</span></span><span>
+</span><span id="line-85"></span><span>  </span><span class="annot"><span class="annottext">AurSearchType
+</span><a href="Web.ArchLinux.API.html#ByMakedepends"><span class="hs-identifier hs-var">ByMakedepends</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;makedepends&quot;</span></span><span>
+</span><span id="line-86"></span><span>  </span><span class="annot"><span class="annottext">AurSearchType
+</span><a href="Web.ArchLinux.API.html#ByOptdepends"><span class="hs-identifier hs-var">ByOptdepends</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;optdepends&quot;</span></span><span>
+</span><span id="line-87"></span><span>  </span><span class="annot"><span class="annottext">AurSearchType
+</span><a href="Web.ArchLinux.API.html#ByCheckdepends"><span class="hs-identifier hs-var">ByCheckdepends</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;checkdepends&quot;</span></span><span>
+</span><span id="line-88"></span><span>
+</span><span id="line-89"></span><span class="annot"><a href="Web.ArchLinux.API.html#aurRPC"><span class="hs-identifier hs-type">aurRPC</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">ClientM</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Value</span></span><span>
+</span><span id="line-90"></span><span id="aurRPC"><span class="annot"><span class="annottext">aurRPC :: Text -&gt; Maybe Text -&gt; [Text] -&gt; ClientM Value
+</span><a href="Web.ArchLinux.API.html#aurRPC"><span class="hs-identifier hs-var hs-var">aurRPC</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Proxy AurRPC
+-&gt; Int -&gt; Text -&gt; Maybe Text -&gt; [Text] -&gt; ClientM Value
+forall api.
+HasClient ClientM api =&gt;
+Proxy api -&gt; Client ClientM api
+</span><span class="hs-identifier hs-var">client</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Proxy AurRPC
+forall k (t :: k). Proxy t
+</span><span class="hs-identifier hs-var">Proxy</span></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="Web.ArchLinux.Types.API.html#AurRPC"><span class="hs-identifier hs-type">AurRPC</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">5</span></span><span>
+</span><span id="line-91"></span><span>
+</span><span id="line-92"></span><span class="hs-comment">-- This is evil and cheating!! Use this to report delayed json decode error</span><span>
+</span><span id="line-93"></span><span class="annot"><a href="Web.ArchLinux.API.html#dummyResponse"><span class="hs-identifier hs-type">dummyResponse</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Response</span></span><span>
+</span><span id="line-94"></span><span id="dummyResponse"><span class="annot"><span class="annottext">dummyResponse :: Response
+</span><a href="Web.ArchLinux.API.html#dummyResponse"><span class="hs-identifier hs-var hs-var">dummyResponse</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Status -&gt; Seq Header -&gt; HttpVersion -&gt; ByteString -&gt; Response
+forall a. Status -&gt; Seq Header -&gt; HttpVersion -&gt; a -&gt; ResponseF a
+</span><span class="hs-identifier hs-var">Response</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Int -&gt; Status
+forall a. Enum a =&gt; Int -&gt; a
+</span><span class="hs-identifier hs-var">toEnum</span></span><span> </span><span class="annot"><span class="annottext">Int
+</span><span class="hs-number">0</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Seq Header
+forall a. Monoid a =&gt; a
+</span><span class="hs-identifier hs-var">mempty</span></span><span> </span><span class="annot"><span class="annottext">HttpVersion
+</span><span class="hs-identifier hs-var">http11</span></span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><span class="hs-string">&quot;dummy response for error display&quot;</span></span><span>
+</span><span id="line-95"></span><span>
+</span><span id="line-96"></span><span id="local-6989586621679515300"><span class="annot"><a href="Web.ArchLinux.API.html#parseResult"><span class="hs-identifier hs-type">parseResult</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679515300"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Value</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">ClientM</span></span><span> </span><span class="annot"><a href="#local-6989586621679515300"><span class="hs-identifier hs-type">a</span></a></span></span><span>
+</span><span id="line-97"></span><span id="parseResult"><span class="annot"><span class="annottext">parseResult :: Value -&gt; ClientM a
+</span><a href="Web.ArchLinux.API.html#parseResult"><span class="hs-identifier hs-var hs-var">parseResult</span></a></span></span><span> </span><span id="local-6989586621679515155"><span class="annot"><span class="annottext">Value
+</span><a href="#local-6989586621679515155"><span class="hs-identifier hs-var">v</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Value -&gt; Result a
+forall a. FromJSON a =&gt; Value -&gt; Result a
+</span><span class="hs-identifier hs-var">fromJSON</span></span><span> </span><span class="annot"><span class="annottext">Value
+</span><a href="#local-6989586621679515155"><span class="hs-identifier hs-var">v</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-98"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">Success</span></span><span> </span><span id="local-6989586621679515153"><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679515153"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">a -&gt; ClientM a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">a
+</span><a href="#local-6989586621679515153"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-99"></span><span>  </span><span class="annot"><span class="hs-identifier hs-type">Data.Aeson.Error</span></span><span> </span><span id="local-6989586621679515151"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679515151"><span class="hs-identifier hs-var">err</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">ClientError -&gt; ClientM a
+forall (m :: Type -&gt; Type) a. RunClient m =&gt; ClientError -&gt; m a
+</span><span class="hs-identifier hs-var">throwClientError</span></span><span> </span><span class="annot"><span class="annottext">(ClientError -&gt; ClientM a) -&gt; ClientError -&gt; ClientM a
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Response -&gt; ClientError
+</span><span class="hs-identifier hs-var">DecodeFailure</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Text
+</span><span class="hs-identifier hs-var">T.pack</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679515151"><span class="hs-identifier hs-var">err</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">Response
+</span><a href="Web.ArchLinux.API.html#dummyResponse"><span class="hs-identifier hs-var">dummyResponse</span></a></span><span>
+</span><span id="line-100"></span><span>
+</span><span id="line-101"></span><span class="annot"><a href="Web.ArchLinux.API.html#searchAur"><span class="hs-identifier hs-type">searchAur</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#AurSearchType"><span class="hs-identifier hs-type">AurSearchType</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-type">APIClient</span></a></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Web.ArchLinux.API.html#Aur"><span class="hs-identifier hs-type">Aur</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-type">AurResponse</span></a></span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#AurSearch"><span class="hs-identifier hs-type">AurSearch</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-102"></span><span id="searchAur"><span class="annot"><span class="annottext">searchAur :: AurSearchType -&gt; Text -&gt; APIClient 'Aur (AurResponse AurSearch)
+</span><a href="Web.ArchLinux.API.html#searchAur"><span class="hs-identifier hs-var hs-var">searchAur</span></a></span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">AurSearchType -&gt; Text
+</span><a href="Web.ArchLinux.API.html#searchTypeToValue"><span class="hs-identifier hs-var">searchTypeToValue</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679515147"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515147"><span class="hs-identifier hs-var">f</span></a></span></span><span class="hs-special">)</span><span> </span><span id="local-6989586621679515146"><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515146"><span class="hs-identifier hs-var">arg</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ClientM (AurResponse AurSearch)
+-&gt; APIClient 'Aur (AurResponse AurSearch)
+forall (k :: APIType) a. ClientM a -&gt; APIClient k a
+</span><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-var">APIClient</span></a></span><span> </span><span class="annot"><span class="annottext">(ClientM (AurResponse AurSearch)
+ -&gt; APIClient 'Aur (AurResponse AurSearch))
+-&gt; ClientM (AurResponse AurSearch)
+-&gt; APIClient 'Aur (AurResponse AurSearch)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-103"></span><span>  </span><span id="local-6989586621679515145"><span class="annot"><span class="annottext">Value
+</span><a href="#local-6989586621679515145"><span class="hs-identifier hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; [Text] -&gt; ClientM Value
+</span><a href="Web.ArchLinux.API.html#aurRPC"><span class="hs-identifier hs-var">aurRPC</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;search&quot;</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Text -&gt; Maybe Text
+forall a. a -&gt; Maybe a
+</span><span class="hs-identifier hs-var">Just</span></span><span> </span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515147"><span class="hs-identifier hs-var">f</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Text
+</span><a href="#local-6989586621679515146"><span class="hs-identifier hs-var">arg</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-104"></span><span>  </span><span class="annot"><span class="annottext">Value -&gt; ClientM (AurResponse AurSearch)
+forall a. FromJSON a =&gt; Value -&gt; ClientM a
+</span><a href="Web.ArchLinux.API.html#parseResult"><span class="hs-identifier hs-var">parseResult</span></a></span><span> </span><span class="annot"><span class="annottext">Value
+</span><a href="#local-6989586621679515145"><span class="hs-identifier hs-var">result</span></a></span><span>
+</span><span id="line-105"></span><span>
+</span><span id="line-106"></span><span class="annot"><a href="Web.ArchLinux.API.html#getAurInfo"><span class="hs-identifier hs-type">getAurInfo</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-type">APIClient</span></a></span><span> </span><span class="hs-special">'</span><span class="annot"><a href="Web.ArchLinux.API.html#Aur"><span class="hs-identifier hs-type">Aur</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-type">AurResponse</span></a></span><span> </span><span class="hs-special">[</span><span class="annot"><a href="Web.ArchLinux.Types.html#AurInfo"><span class="hs-identifier hs-type">AurInfo</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-107"></span><span id="getAurInfo"><span class="annot"><span class="annottext">getAurInfo :: [Text] -&gt; APIClient 'Aur (AurResponse [AurInfo])
+</span><a href="Web.ArchLinux.API.html#getAurInfo"><span class="hs-identifier hs-var hs-var">getAurInfo</span></a></span></span><span> </span><span id="local-6989586621679515143"><span class="annot"><span class="annottext">[Text]
+</span><a href="#local-6989586621679515143"><span class="hs-identifier hs-var">exactNames</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ClientM (AurResponse [AurInfo])
+-&gt; APIClient 'Aur (AurResponse [AurInfo])
+forall (k :: APIType) a. ClientM a -&gt; APIClient k a
+</span><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-var">APIClient</span></a></span><span> </span><span class="annot"><span class="annottext">(ClientM (AurResponse [AurInfo])
+ -&gt; APIClient 'Aur (AurResponse [AurInfo]))
+-&gt; ClientM (AurResponse [AurInfo])
+-&gt; APIClient 'Aur (AurResponse [AurInfo])
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-108"></span><span>  </span><span id="local-6989586621679515142"><span class="annot"><span class="annottext">Value
+</span><a href="#local-6989586621679515142"><span class="hs-identifier hs-var">result</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Text -&gt; Maybe Text -&gt; [Text] -&gt; ClientM Value
+</span><a href="Web.ArchLinux.API.html#aurRPC"><span class="hs-identifier hs-var">aurRPC</span></a></span><span> </span><span class="annot"><span class="annottext">Text
+</span><span class="hs-string">&quot;info&quot;</span></span><span> </span><span class="annot"><span class="annottext">Maybe Text
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="annot"><span class="annottext">[Text]
+</span><a href="#local-6989586621679515143"><span class="hs-identifier hs-var">exactNames</span></a></span><span>
+</span><span id="line-109"></span><span>  </span><span class="annot"><span class="annottext">Value -&gt; ClientM (AurResponse [AurInfo])
+forall a. FromJSON a =&gt; Value -&gt; ClientM a
+</span><a href="Web.ArchLinux.API.html#parseResult"><span class="hs-identifier hs-var">parseResult</span></a></span><span> </span><span class="annot"><span class="annottext">Value
+</span><a href="#local-6989586621679515142"><span class="hs-identifier hs-var">result</span></a></span><span>
+</span><span id="line-110"></span><span>
+</span><span id="line-111"></span><span class="hs-comment">-----------------------------------------------------------------------------</span><span>
+</span><span id="line-112"></span><span>
+</span><span id="line-113"></span><span class="annot"><a href="Web.ArchLinux.API.html#runClient"><span class="hs-identifier hs-type">runClient</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-keyword">forall</span><span> </span><span id="local-6989586621679515140"><span class="annot"><a href="#local-6989586621679515140"><span class="hs-identifier hs-type">s</span></a></span></span><span> </span><span id="local-6989586621679515139"><span class="annot"><a href="#local-6989586621679515139"><span class="hs-identifier hs-type">a</span></a></span></span><span class="hs-operator">.</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#HasBaseUrl"><span class="hs-identifier hs-type">HasBaseUrl</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679515140"><span class="hs-identifier hs-type">s</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Manager</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-type">APIClient</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679515140"><span class="hs-identifier hs-type">s</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679515139"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Either</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">ClientError</span></span><span> </span><span class="annot"><a href="#local-6989586621679515139"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span>
+</span><span id="line-114"></span><span id="runClient"><span class="annot"><span class="annottext">runClient :: Manager -&gt; APIClient s a -&gt; IO (Either ClientError a)
+</span><a href="Web.ArchLinux.API.html#runClient"><span class="hs-identifier hs-var hs-var">runClient</span></a></span></span><span> </span><span id="local-6989586621679515138"><span class="annot"><span class="annottext">Manager
+</span><a href="#local-6989586621679515138"><span class="hs-identifier hs-var">manager</span></a></span></span><span> </span><span id="local-6989586621679515137"><span class="annot"><span class="annottext">APIClient s a
+</span><a href="#local-6989586621679515137"><span class="hs-identifier hs-var">m</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">ClientM a -&gt; ClientEnv -&gt; IO (Either ClientError a)
+forall a. ClientM a -&gt; ClientEnv -&gt; IO (Either ClientError a)
+</span><span class="hs-identifier hs-var">runClientM</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">APIClient s a -&gt; ClientM a
+forall (k :: APIType) a. APIClient k a -&gt; ClientM a
+</span><a href="Web.ArchLinux.API.html#unWrapClientM"><span class="hs-identifier hs-var hs-var">unWrapClientM</span></a></span><span> </span><span class="annot"><span class="annottext">APIClient s a
+</span><a href="#local-6989586621679515137"><span class="hs-identifier hs-var">m</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">(ClientEnv -&gt; IO (Either ClientError a))
+-&gt; ClientEnv -&gt; IO (Either ClientError a)
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Manager -&gt; BaseUrl -&gt; ClientEnv
+</span><span class="hs-identifier hs-var">mkClientEnv</span></span><span> </span><span class="annot"><span class="annottext">Manager
+</span><a href="#local-6989586621679515138"><span class="hs-identifier hs-var">manager</span></a></span><span> </span><span class="annot"><span class="annottext">(BaseUrl -&gt; ClientEnv) -&gt; BaseUrl -&gt; ClientEnv
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">HasBaseUrl s =&gt; BaseUrl
+forall (k :: APIType). HasBaseUrl k =&gt; BaseUrl
+</span><a href="Web.ArchLinux.API.html#getBaseUrl"><span class="hs-identifier hs-var">getBaseUrl</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679515140"><span class="hs-identifier hs-type">s</span></a></span><span>
+</span><span id="line-115"></span></pre></body></html>
