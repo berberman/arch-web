@@ -21,7 +21,7 @@ jobs:
         id: setup-ffmpeg
 
       - name: "Run HLint"
-        run: curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s src test
+        run: curl -sSL https://raw.github.com/ndmitchell/hlint/master/misc/run.sh | sh -s src
 
       - name: Setup Haskell
         uses: haskell/actions/setup@v1
