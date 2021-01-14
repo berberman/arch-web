@@ -317,21 +317,22 @@ runAPIClient' :: HasBaseUrl s => APIClient s a -> IO (Either ClientError a)
 --   See <a>searchPackage</a>.
 data SearchOptions
 SearchOptions :: Maybe Text -> Maybe Text -> Maybe Text -> [Repo] -> [Arch] -> Maybe Text -> Maybe Text -> Maybe Flagged -> SearchOptions
-[nameOrDescription] :: SearchOptions -> Maybe Text
-[exactName] :: SearchOptions -> Maybe Text
-[description] :: SearchOptions -> Maybe Text
-[repositories] :: SearchOptions -> [Repo]
-[architectures] :: SearchOptions -> [Arch]
-[targetMaintianer] :: SearchOptions -> Maybe Text
-[targetPackager] :: SearchOptions -> Maybe Text
-[isFlagged] :: SearchOptions -> Maybe Flagged
+[_nameOrDescription] :: SearchOptions -> Maybe Text
+[_exactName] :: SearchOptions -> Maybe Text
+[_targetDescription] :: SearchOptions -> Maybe Text
+[_targetRepositories] :: SearchOptions -> [Repo]
+[_targetArchitectures] :: SearchOptions -> [Arch]
+[_targetMaintianer] :: SearchOptions -> Maybe Text
+[_targetPackager] :: SearchOptions -> Maybe Text
+[_isFlagged] :: SearchOptions -> Maybe Flagged
 
 -- | An empty options value for convenient.
 --   
---   For example, <tt> searchPackage emptySearchOptions{nameOrDescription =
---   Just "kea", repositories = [Community, CommunityTesting]} </tt>
---   searchs packages whose names or descriptions contain <tt>kea</tt>,
---   from <tt>Community</tt> or <tt>Community-Testing</tt>.
+--   For example, <tt> let options = emptySearchOptions &amp;
+--   nameOrDescription ?~ "kea" &amp; targetRepositories .~ [Community,
+--   CommunityTesting] searchPackage options </tt> searchs packages whose
+--   names or descriptions contain <tt>kea</tt>, from <tt>Community</tt> or
+--   <tt>Community-Testing</tt>.
 emptySearchOptions :: SearchOptions
 
 -- | Gets details of an exact package.
@@ -496,6 +497,14 @@ class HasError s a | s -> a
 error :: HasError s a => Lens' s a
 class HasAurType s a | s -> a
 aurType :: HasAurType s a => Lens' s a
+exactName :: Lens' SearchOptions (Maybe Text)
+isFlagged :: Lens' SearchOptions (Maybe Flagged)
+nameOrDescription :: Lens' SearchOptions (Maybe Text)
+targetArchitectures :: Lens' SearchOptions [Arch]
+targetDescription :: Lens' SearchOptions (Maybe Text)
+targetMaintianer :: Lens' SearchOptions (Maybe Text)
+targetPackager :: Lens' SearchOptions (Maybe Text)
+targetRepositories :: Lens' SearchOptions [Repo]
 instance Web.ArchLinux.Types.Lens.HasResultCount (Web.ArchLinux.Types.AurResponse a) GHC.Types.Int
 instance Web.ArchLinux.Types.Lens.HasError (Web.ArchLinux.Types.AurResponse a) (GHC.Maybe.Maybe Data.Text.Internal.Text)
 instance Web.ArchLinux.Types.Lens.HasAurType (Web.ArchLinux.Types.AurResponse a) Web.ArchLinux.Types.AurResponseType
