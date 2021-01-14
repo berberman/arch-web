@@ -120,13 +120,13 @@ ArchLinuxResponse :: Int -> Int -> Bool -> [a] -> ArchLinuxResponse a
 --   Some of fileds are renamed in this record type, for sharing overloaded
 --   lenses between data type returned by Arch Linux official API.
 data AurSearch
-AurSearch :: Int -> Text -> Int -> Text -> Text -> Text -> Maybe Text -> Int -> Double -> Maybe Int -> Maybe Text -> Int -> Int -> Text -> AurSearch
+AurSearch :: Int -> Text -> Int -> Text -> Text -> Maybe Text -> Maybe Text -> Int -> Double -> Maybe Int -> Maybe Text -> Int -> Int -> Text -> AurSearch
 [$sel:_id:AurSearch] :: AurSearch -> Int
 [$sel:_name:AurSearch] :: AurSearch -> Text
 [$sel:_packageBaseID:AurSearch] :: AurSearch -> Int
 [$sel:_packageBase:AurSearch] :: AurSearch -> Text
 [$sel:_version:AurSearch] :: AurSearch -> Text
-[$sel:_description:AurSearch] :: AurSearch -> Text
+[$sel:_description:AurSearch] :: AurSearch -> Maybe Text
 
 -- | <pre>
 --   URL
@@ -532,7 +532,7 @@ instance Web.ArchLinux.Types.Lens.HasMaintainer Web.ArchLinux.Types.AurSearch (G
 instance Web.ArchLinux.Types.Lens.HasLastModified Web.ArchLinux.Types.AurSearch GHC.Types.Int
 instance Web.ArchLinux.Types.Lens.HasId Web.ArchLinux.Types.AurSearch GHC.Types.Int
 instance Web.ArchLinux.Types.Lens.HasFirstSubmitted Web.ArchLinux.Types.AurSearch GHC.Types.Int
-instance Web.ArchLinux.Types.Lens.HasDescription Web.ArchLinux.Types.AurSearch Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasDescription Web.ArchLinux.Types.AurSearch (GHC.Maybe.Maybe Data.Text.Internal.Text)
 instance Web.ArchLinux.Types.Lens.HasUrl Web.ArchLinux.Types.AurSearch (GHC.Maybe.Maybe Data.Text.Internal.Text)
 instance Web.ArchLinux.Types.Lens.HasVersion Web.ArchLinux.Types.AurSearch Data.Text.Internal.Text
 instance Web.ArchLinux.Types.Lens.HasVersion (Web.ArchLinux.Types.ArchLinuxResponse a) GHC.Types.Int
