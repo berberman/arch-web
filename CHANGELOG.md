@@ -1,4 +1,4 @@
-# archlinux-web
+# arch-web
 
 ## 0.1.0
 

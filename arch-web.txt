@@ -6,7 +6,7 @@
 --   
 --   Arch Linux official and AUR web interface binding. See README for
 --   details.
-@package archlinux-web
+@package arch-web
 @version 0.1.0
 
 
