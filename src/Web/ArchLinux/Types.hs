@@ -217,7 +217,7 @@ data AurSearch = AurSearch
     _packageBaseID :: Int,
     _packageBase :: Text,
     _version :: Text,
-    _description :: Text,
+    _description :: Maybe Text,
     -- | @URL@
     _url :: Maybe Text,
     _numVotes :: Int,

@@ -16,7 +16,7 @@ tests manager =
     [ createTest "getPackageDetails" manager $ getPackageDetails Core X86_64 "linux",
       createTest "getPackageFiles" manager $ getPackageFiles Core X86_64 "linux",
       createTest "searchPackage" manager $ searchPackage emptySearchOptions {_nameOrDescription = Just "linux"},
-      createTest "searchAur" manager $ searchAur ByNameOrDesc "yay",
+      createTest "searchAur" manager $ searchAur ByNameOrDesc "haskell",
       createTest "getAurInfo" manager $ getAurInfo ["arch-hs-git"]
     ]
 
