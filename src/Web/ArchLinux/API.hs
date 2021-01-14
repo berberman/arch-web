@@ -96,14 +96,14 @@ runAPIClient' m = newTlsManager >>= flip runAPIClient m
 --
 -- See 'searchPackage'.
 data SearchOptions = SearchOptions
-  { nameOrDescription :: Maybe Text,
-    exactName :: Maybe Text,
-    description :: Maybe Text,
-    repositories :: [Repo],
-    architectures :: [Arch],
-    targetMaintianer :: Maybe Text,
-    targetPackager :: Maybe Text,
-    isFlagged :: Maybe Flagged
+  { _nameOrDescription :: Maybe Text,
+    _exactName :: Maybe Text,
+    _targetDescription :: Maybe Text,
+    _targetRepositories :: [Repo],
+    _targetArchitectures :: [Arch],
+    _targetMaintianer :: Maybe Text,
+    _targetPackager :: Maybe Text,
+    _isFlagged :: Maybe Flagged
   }
   deriving stock (Generic, Eq, Ord, Show)
 
@@ -111,7 +111,11 @@ data SearchOptions = SearchOptions
 --
 -- For example,
 -- @
--- searchPackage emptySearchOptions{nameOrDescription = Just "kea", repositories = [Community, CommunityTesting]}
+--  let options =
+--        emptySearchOptions
+--          & nameOrDescription ?~ "kea"
+--          & targetRepositories .~ [Community, CommunityTesting]
+-- searchPackage options
 -- @
 -- searchs packages whose names or descriptions contain @kea@, from @Community@ or @Community-Testing@.
 emptySearchOptions :: SearchOptions
@@ -147,14 +151,14 @@ searchPackage SearchOptions {..} =
   let f = client (Proxy @SearchPackage)
    in APIClient $
         f
-          nameOrDescription
-          exactName
-          description
-          repositories
-          architectures
-          targetMaintianer
-          targetPackager
-          isFlagged
+          _nameOrDescription
+          _exactName
+          _targetDescription
+          _targetRepositories
+          _targetArchitectures
+          _targetMaintianer
+          _targetPackager
+          _isFlagged
 
 -----------------------------------------------------------------------------
 

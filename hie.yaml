@@ -2,3 +2,5 @@ cradle:
   cabal:
     - path: "./src"
       component: "lib:arch-web"
+    - path: "./test"
+      component: "test:arch-web-test"

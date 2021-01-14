@@ -89,6 +89,13 @@ library
   other-modules:   Web.ArchLinux.Types.API
   hs-source-dirs:  src
 
+test-suite arch-web-test
+  import:         common
+  type:           exitcode-stdio-1.0
+  build-depends:  arch-web, HUnit
+  hs-source-dirs: test
+  main-is:        Main.hs
+  
 source-repository head
   type:     git
   location: https://github.com/berberman/arch-web

@@ -11,7 +11,8 @@ module Web.ArchLinux.Types.Lens
   )
 where
 
-import Control.Lens.TH (makeFieldsNoPrefix)
+import Control.Lens.TH (makeFieldsNoPrefix, makeLenses)
+import Web.ArchLinux.API
 import Web.ArchLinux.Types
 
 makeFieldsNoPrefix ''PackageInformation
@@ -21,3 +22,5 @@ makeFieldsNoPrefix ''ArchLinuxResponse
 makeFieldsNoPrefix ''AurSearch
 makeFieldsNoPrefix ''AurInfo
 makeFieldsNoPrefix ''AurResponse
+
+makeLenses ''SearchOptions
