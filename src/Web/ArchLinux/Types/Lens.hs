@@ -16,6 +16,8 @@ import Web.ArchLinux.Types
 
 makeFieldsNoPrefix ''PackageInformation
 makeFieldsNoPrefix ''PackageFiles
+makeFieldsNoPrefix ''ArchLinuxResponse
 
 makeFieldsNoPrefix ''AurSearch
 makeFieldsNoPrefix ''AurInfo
+makeFieldsNoPrefix ''AurResponse

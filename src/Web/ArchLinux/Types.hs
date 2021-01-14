@@ -219,12 +219,12 @@ data AurSearch = AurSearch
     _version :: Text,
     _description :: Text,
     -- | @URL@
-    _url :: Text,
+    _url :: Maybe Text,
     _numVotes :: Int,
     _popularity :: Double,
     -- | UTCTime
     _outOfDate :: Maybe Int,
-    _maintainer :: Text,
+    _maintainer :: Maybe Text,
     -- | UTCTime
     _firstSubmitted :: Int,
     -- | UTCTime
@@ -303,14 +303,31 @@ data AurResponseType = Search | Multiinfo | Error
 -- | Response data type of AUR API.
 data AurResponse a = AurResponse
   { _version :: Int,
-    _type :: AurResponseType,
-    _resultcount :: Int,
+    _aurType :: AurResponseType,
+    _resultCount :: Int,
     _results :: a,
     -- | Available when '_type' equals to 'AurResponseType.Error'.
     _error :: Maybe Text
   }
   deriving stock (Show, Eq, Ord, Functor, Generic)
 
-deriving via ArchLinuxJSON (AurResponse a) instance (FromJSON a) => FromJSON (AurResponse a)
+instance (FromJSON a) => FromJSON (AurResponse a) where
+  parseJSON = withObject "AurResponse" $ \o -> do
+    _version <- o .: "version"
+    _aurType <- o .: "type"
+    _resultCount <- o .: "resultcount"
+    _results <- o .: "results"
+    _error <- o .:? "error"
+    pure AurResponse {..}
 
-deriving via ArchLinuxJSON (AurResponse a) instance (ToJSON a) => ToJSON (AurResponse a)
+instance (ToJSON a) => ToJSON (AurResponse a) where
+  toJSON AurResponse {..} =
+    object $
+      [ "version" .= _version,
+        "type" .= _aurType,
+        "resultcount" .= _resultCount,
+        "results" .= _results
+      ]
+        <> case _error of
+          Just err -> ["error" .= err]
+          _ -> []

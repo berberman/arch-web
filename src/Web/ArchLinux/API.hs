@@ -1,4 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 -- | Copyright: (c) 2021 berberman
 -- SPDX-License-Identifier: MIT
@@ -18,6 +19,7 @@ module Web.ArchLinux.API
     APIType (..),
     HasBaseUrl (..),
     runAPIClient,
+    runAPIClient',
 
     -- * Arch Linux official
     SearchOptions (..),
@@ -33,15 +35,20 @@ module Web.ArchLinux.API
   )
 where
 
+import Control.Monad.Catch (MonadCatch, MonadThrow)
+import Control.Monad.Except (MonadError)
+import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.Reader (MonadReader)
 import Data.Aeson (FromJSON, Result (..), Value, fromJSON)
 import Data.Proxy
 import Data.Text (Text)
 import qualified Data.Text as T
 import GHC.Generics (Generic)
 import Network.HTTP.Client (Manager)
+import Network.HTTP.Client.TLS (newTlsManager)
 import Network.HTTP.Types (http11)
 import Servant.Client
-import Servant.Client.Core (throwClientError)
+import Servant.Client.Core (RunClient, throwClientError)
 import Web.ArchLinux.Types
 import Web.ArchLinux.Types.API
 
@@ -50,6 +57,18 @@ data APIType = ArchLinux | Aur
 
 -- | A wrapper of 'ClientM', with 'BaseUrl' reflected to type level phantom 'APIType'.
 newtype APIClient (k :: APIType) a = APIClient {unWrapClientM :: ClientM a}
+  deriving newtype
+    ( Functor,
+      Applicative,
+      Monad,
+      MonadIO,
+      Generic,
+      MonadReader ClientEnv,
+      MonadError ClientError,
+      MonadThrow,
+      MonadCatch
+    )
+  deriving (RunClient) via ClientM
 
 -- | Class to reify 'BaseUrl' from 'APIType'.
 class HasBaseUrl (k :: APIType) where
@@ -66,6 +85,10 @@ instance HasBaseUrl 'Aur where
 -- It calls 'getBaseUrl', then creates 'ClientEnv', finally calls 'runClientM'.
 runAPIClient :: forall s a. HasBaseUrl s => Manager -> APIClient s a -> IO (Either ClientError a)
 runAPIClient manager m = runClientM (unWrapClientM m) $ mkClientEnv manager $ getBaseUrl @s
+
+-- | Like 'runAPIClient', but creates a 'Manager'/
+runAPIClient' :: HasBaseUrl s => APIClient s a -> IO (Either ClientError a)
+runAPIClient' m = newTlsManager >>= flip runAPIClient m
 
 -----------------------------------------------------------------------------
 
@@ -175,7 +198,7 @@ searchAur ::
   AurSearchType ->
   -- | search argument
   Text ->
-  APIClient 'Aur (AurResponse AurSearch)
+  APIClient 'Aur (AurResponse [AurSearch])
 searchAur (searchTypeToValue -> f) arg = APIClient $ do
   result <- aurRPC "search" (Just f) [arg]
   parseResult result

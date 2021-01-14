@@ -27,9 +27,12 @@ common common
     , aeson                ^>=1.5.4
     , base                 >=4.10   && <5
     , deriving-aeson       ^>=0.2.6
+    , exceptions           ^>=0.10.4
     , http-client          ^>=0.6.4
+    , http-client-tls      ^>=0.3.5
     , http-types           ^>=0.12.3
     , lens                 ^>=4.19.2
+    , mtl                  ^>=2.2.2
     , servant              ^>=0.18.2
     , servant-client       ^>=0.18.2
     , servant-client-core  ^>=0.18.2
