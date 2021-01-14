@@ -2,18 +2,22 @@
 -- See Hoogle, http://www.haskell.org/hoogle/
 
 
--- | Arch Linux web interface binding
+-- | Arch Linux official and AUR web interface binding
 --   
---   Arch Linux web interface binding. See README for details.
+--   Arch Linux official and AUR web interface binding. See README for
+--   details.
 @package archlinux-web
 @version 0.1.0
 
+
+-- | This module defines types and their serializations used in API.
+--   
+--   Fields' names are prefixed with <tt>_</tt> for lenses generation,
+--   consider using <a>Web.ArchLinux.Types.Lens</a> to access data types
+--   smoothly.
 module Web.ArchLinux.Types
-type ArchLinuxJSON = CustomJSON '[FieldLabelModifier (StripPrefix "_", CamelToSnake)]
-unString :: Value -> Text
-toQueryParamViaJSON :: ToJSON a => a -> Text
-data AurModifier
-type AurJSON = CustomJSON '[FieldLabelModifier (StripPrefix "_", AurModifier)]
+
+-- | Official repositories.
 data Repo
 Core :: Repo
 Extra :: Repo
@@ -22,10 +26,15 @@ Multilib :: Repo
 MultilibTesting :: Repo
 Community :: Repo
 CommunityTesting :: Repo
+
+-- | Official architectures.
 data Arch
 Any :: Arch
 I686 :: Arch
 X86_64 :: Arch
+
+-- | Liceses defined in
+--   <a>https://archlinux.org/packages/core/any/licenses/</a>.
 data License
 AGPL3 :: License
 Apache :: License
@@ -50,7 +59,8 @@ Unlicense :: License
 W3C :: License
 ZPL :: License
 Custom :: Text -> License
-licenseJSONOption :: Options
+
+-- | Package details returned by <a>getPackageDetails</a>.
 data PackageInformation
 PackageInformation :: Text -> Text -> Repo -> Arch -> Text -> Text -> Int -> Text -> Text -> Text -> Int -> Int -> UTCTime -> UTCTime -> Maybe UTCTime -> [Text] -> Text -> [Text] -> [License] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> PackageInformation
 [$sel:_pkgname:PackageInformation] :: PackageInformation -> Text
@@ -79,6 +89,8 @@ PackageInformation :: Text -> Text -> Repo -> Arch -> Text -> Text -> Int -> Tex
 [$sel:_optdepends:PackageInformation] :: PackageInformation -> [Text]
 [$sel:_makedepends:PackageInformation] :: PackageInformation -> [Text]
 [$sel:_checkdepends:PackageInformation] :: PackageInformation -> [Text]
+
+-- | Package files list returned by <a>getPackageFiles</a>
 data PackageFiles
 PackageFiles :: Text -> Repo -> Arch -> UTCTime -> UTCTime -> Int -> Int -> [FilePath] -> PackageFiles
 [$sel:_pkgname:PackageFiles] :: PackageFiles -> Text
@@ -89,17 +101,26 @@ PackageFiles :: Text -> Repo -> Arch -> UTCTime -> UTCTime -> Int -> Int -> [Fil
 [$sel:_filesCount:PackageFiles] :: PackageFiles -> Int
 [$sel:_dirCount:PackageFiles] :: PackageFiles -> Int
 [$sel:_files:PackageFiles] :: PackageFiles -> [FilePath]
+
+-- | Flagged package means out-of-date.
 data Flagged
 Flagged :: Flagged
 NotFlagged :: Flagged
+
+-- | Response data type of <a>searchPackage</a>.
 data ArchLinuxResponse a
 ArchLinuxResponse :: Int -> Int -> Bool -> [a] -> ArchLinuxResponse a
 [$sel:_version:ArchLinuxResponse] :: ArchLinuxResponse a -> Int
 [$sel:_limit:ArchLinuxResponse] :: ArchLinuxResponse a -> Int
 [$sel:_valid:ArchLinuxResponse] :: ArchLinuxResponse a -> Bool
 [$sel:_results:ArchLinuxResponse] :: ArchLinuxResponse a -> [a]
+
+-- | Search results returned by <a>searchAur</a>.
+--   
+--   Some of fileds are renamed in this record type, for sharing overloaded
+--   lenses between data type returned by Arch Linux official API.
 data AurSearch
-AurSearch :: Int -> Text -> Int -> Text -> Text -> Text -> Text -> Int -> Double -> Maybe Int -> Text -> Int -> Int -> Text -> AurSearch
+AurSearch :: Int -> Text -> Int -> Text -> Text -> Text -> Maybe Text -> Int -> Double -> Maybe Int -> Maybe Text -> Int -> Int -> Text -> AurSearch
 [$sel:_id:AurSearch] :: AurSearch -> Int
 [$sel:_name:AurSearch] :: AurSearch -> Text
 [$sel:_packageBaseID:AurSearch] :: AurSearch -> Int
@@ -110,13 +131,13 @@ AurSearch :: Int -> Text -> Int -> Text -> Text -> Text -> Text -> Int -> Double
 -- | <pre>
 --   URL
 --   </pre>
-[$sel:_url:AurSearch] :: AurSearch -> Text
+[$sel:_url:AurSearch] :: AurSearch -> Maybe Text
 [$sel:_numVotes:AurSearch] :: AurSearch -> Int
 [$sel:_popularity:AurSearch] :: AurSearch -> Double
 
 -- | UTCTime
 [$sel:_outOfDate:AurSearch] :: AurSearch -> Maybe Int
-[$sel:_maintainer:AurSearch] :: AurSearch -> Text
+[$sel:_maintainer:AurSearch] :: AurSearch -> Maybe Text
 
 -- | UTCTime
 [$sel:_firstSubmitted:AurSearch] :: AurSearch -> Int
@@ -124,8 +145,13 @@ AurSearch :: Int -> Text -> Int -> Text -> Text -> Text -> Text -> Int -> Double
 -- | UTCTime
 [$sel:_lastModified:AurSearch] :: AurSearch -> Int
 [$sel:_urlPath:AurSearch] :: AurSearch -> Text
+
+-- | Package details returned by <a>getAurInfo</a>.
+--   
+--   This data type extends <a>AurSearch</a> informally, so it includes
+--   <a>$sel:_search:AurInfo</a> as a member.
 data AurInfo
-AurInfo :: AurSearch -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> AurInfo
+AurInfo :: AurSearch -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [License] -> [Text] -> AurInfo
 
 -- | <pre>
 --   ID, Name, PackageBaseID, ...
@@ -155,18 +181,24 @@ AurInfo :: AurSearch -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text]
 [$sel:_provides:AurInfo] :: AurInfo -> [Text]
 [$sel:_replaces:AurInfo] :: AurInfo -> [Text]
 [$sel:_groups:AurInfo] :: AurInfo -> [Text]
-[$sel:_licenses:AurInfo] :: AurInfo -> [Text]
+[$sel:_licenses:AurInfo] :: AurInfo -> [License]
 [$sel:_keywords:AurInfo] :: AurInfo -> [Text]
+
+-- | Return types of AUR API.
 data AurResponseType
 Search :: AurResponseType
 Multiinfo :: AurResponseType
 Error :: AurResponseType
+
+-- | Response data type of AUR API.
 data AurResponse a
 AurResponse :: Int -> AurResponseType -> Int -> a -> Maybe Text -> AurResponse a
 [$sel:_version:AurResponse] :: AurResponse a -> Int
-[$sel:_type:AurResponse] :: AurResponse a -> AurResponseType
-[$sel:_resultcount:AurResponse] :: AurResponse a -> Int
+[$sel:_aurType:AurResponse] :: AurResponse a -> AurResponseType
+[$sel:_resultCount:AurResponse] :: AurResponse a -> Int
 [$sel:_results:AurResponse] :: AurResponse a -> a
+
+-- | Available when <tt>_type</tt> equals to <a>Error</a>.
 [$sel:_error:AurResponse] :: AurResponse a -> Maybe Text
 instance Data.Aeson.Types.ToJSON.ToJSON Web.ArchLinux.Types.Repo
 instance Data.Aeson.Types.FromJSON.FromJSON Web.ArchLinux.Types.Repo
@@ -243,15 +275,46 @@ instance Web.Internal.HttpApiData.ToHttpApiData Web.ArchLinux.Types.Arch
 instance Web.Internal.HttpApiData.ToHttpApiData Web.ArchLinux.Types.Repo
 instance Deriving.Aeson.StringModifier Web.ArchLinux.Types.AurModifier
 
+
+-- | Arch Linux official repositories APIs and AUR APIs.
+--   
+--   These two kinds of APIs are distinguished by <a>APIClient</a>.
+--   Functions over them return <a>APIClient</a> parametrize by
+--   corresponding <a>APIType</a>.
+--   
+--   Overall, there are five APIs available, refer to
+--   <a>https://wiki.archlinux.org/index.php/Official_repositories_web_interface</a>
+--   and <a>https://wiki.archlinux.org/index.php/Aurweb_RPC_interface</a>.
 module Web.ArchLinux.API
-data APIType
-ArchLinux :: APIType
-Aur :: APIType
+
+-- | A wrapper of <a>ClientM</a>, with <a>BaseUrl</a> reflected to type
+--   level phantom <a>APIType</a>.
 newtype APIClient (k :: APIType) a
 APIClient :: ClientM a -> APIClient (k :: APIType) a
 [unWrapClientM] :: APIClient (k :: APIType) a -> ClientM a
+
+-- | Two types of APIs.
+data APIType
+ArchLinux :: APIType
+Aur :: APIType
+
+-- | Class to reify <a>BaseUrl</a> from <a>APIType</a>.
 class HasBaseUrl (k :: APIType)
 getBaseUrl :: HasBaseUrl k => BaseUrl
+
+-- | Runs <a>APIClient</a>.
+--   
+--   It calls <a>getBaseUrl</a>, then creates <a>ClientEnv</a>, finally
+--   calls <a>runClientM</a>.
+runAPIClient :: forall s a. HasBaseUrl s => Manager -> APIClient s a -> IO (Either ClientError a)
+
+-- | Like <a>runAPIClient</a>, but creates a <a>Manager</a>/
+runAPIClient' :: HasBaseUrl s => APIClient s a -> IO (Either ClientError a)
+
+-- | Options available in searching packages in Arch Linux official
+--   repositories.
+--   
+--   See <a>searchPackage</a>.
 data SearchOptions
 SearchOptions :: Maybe Text -> Maybe Text -> Maybe Text -> [Repo] -> [Arch] -> Maybe Text -> Maybe Text -> Maybe Flagged -> SearchOptions
 [nameOrDescription] :: SearchOptions -> Maybe Text
@@ -262,10 +325,27 @@ SearchOptions :: Maybe Text -> Maybe Text -> Maybe Text -> [Repo] -> [Arch] -> M
 [targetMaintianer] :: SearchOptions -> Maybe Text
 [targetPackager] :: SearchOptions -> Maybe Text
 [isFlagged] :: SearchOptions -> Maybe Flagged
+
+-- | An empty options value for convenient.
+--   
+--   For example, <tt> searchPackage emptySearchOptions{nameOrDescription =
+--   Just "kea", repositories = [Community, CommunityTesting]} </tt>
+--   searchs packages whose names or descriptions contain <tt>kea</tt>,
+--   from <tt>Community</tt> or <tt>Community-Testing</tt>.
 emptySearchOptions :: SearchOptions
+
+-- | Gets details of an exact package.
 getPackageDetails :: Repo -> Arch -> Text -> APIClient 'ArchLinux PackageInformation
+
+-- | Gets files list of an exact package.
 getPackageFiles :: Repo -> Arch -> Text -> APIClient 'ArchLinux PackageFiles
+
+-- | Searches packages.
+--   
+--   See <a>SearchOptions</a> and <a>emptySearchOptions</a>.
 searchPackage :: SearchOptions -> APIClient 'ArchLinux (ArchLinuxResponse PackageInformation)
+
+-- | Searches packages in AUR by what?
 data AurSearchType
 ByName :: AurSearchType
 ByNameOrDesc :: AurSearchType
@@ -274,13 +354,22 @@ ByDepends :: AurSearchType
 ByMakedepends :: AurSearchType
 ByOptdepends :: AurSearchType
 ByCheckdepends :: AurSearchType
-searchTypeToValue :: AurSearchType -> Text
-aurRPC :: Text -> Maybe Text -> [Text] -> ClientM Value
-dummyResponse :: Response
-parseResult :: FromJSON a => Value -> ClientM a
-searchAur :: AurSearchType -> Text -> APIClient 'Aur (AurResponse AurSearch)
+
+-- | Searches packages in AUR.
+searchAur :: AurSearchType -> Text -> APIClient 'Aur (AurResponse [AurSearch])
+
+-- | Gets details of a set of packages in AUR.
 getAurInfo :: [Text] -> APIClient 'Aur (AurResponse [AurInfo])
-runClient :: forall s a. HasBaseUrl s => Manager -> APIClient s a -> IO (Either ClientError a)
+instance Servant.Client.Core.RunClient.RunClient (Web.ArchLinux.API.APIClient k)
+instance Control.Monad.Catch.MonadCatch (Web.ArchLinux.API.APIClient k)
+instance Control.Monad.Catch.MonadThrow (Web.ArchLinux.API.APIClient k)
+instance Control.Monad.Error.Class.MonadError Servant.Client.Core.ClientError.ClientError (Web.ArchLinux.API.APIClient k)
+instance Control.Monad.Reader.Class.MonadReader Servant.Client.Internal.HttpClient.ClientEnv (Web.ArchLinux.API.APIClient k)
+instance GHC.Generics.Generic (Web.ArchLinux.API.APIClient k a)
+instance Control.Monad.IO.Class.MonadIO (Web.ArchLinux.API.APIClient k)
+instance GHC.Base.Monad (Web.ArchLinux.API.APIClient k)
+instance GHC.Base.Applicative (Web.ArchLinux.API.APIClient k)
+instance GHC.Base.Functor (Web.ArchLinux.API.APIClient k)
 instance GHC.Show.Show Web.ArchLinux.API.SearchOptions
 instance GHC.Classes.Ord Web.ArchLinux.API.SearchOptions
 instance GHC.Classes.Eq Web.ArchLinux.API.SearchOptions
@@ -293,6 +382,185 @@ instance GHC.Generics.Generic Web.ArchLinux.API.AurSearchType
 instance Web.ArchLinux.API.HasBaseUrl 'Web.ArchLinux.API.ArchLinux
 instance Web.ArchLinux.API.HasBaseUrl 'Web.ArchLinux.API.Aur
 
+
+-- | Arch Linux official repositories web interfaces and AUR web
+--   interfaces.
+--   
+--   See <a>Web.ArchLinux.API</a> for details.
 module Web.ArchLinux
 
+
+-- | Lenses.
 module Web.ArchLinux.Types.Lens
+class HasUrl s a | s -> a
+url :: HasUrl s a => Lens' s a
+class HasRepo s a | s -> a
+repo :: HasRepo s a => Lens' s a
+class HasReplaces s a | s -> a
+replaces :: HasReplaces s a => Lens' s a
+class HasProvides s a | s -> a
+provides :: HasProvides s a => Lens' s a
+class HasPkgver s a | s -> a
+pkgver :: HasPkgver s a => Lens' s a
+class HasPkgrel s a | s -> a
+pkgrel :: HasPkgrel s a => Lens' s a
+class HasPkgname s a | s -> a
+pkgname :: HasPkgname s a => Lens' s a
+class HasPkgdesc s a | s -> a
+pkgdesc :: HasPkgdesc s a => Lens' s a
+class HasPkgbase s a | s -> a
+pkgbase :: HasPkgbase s a => Lens' s a
+class HasPackager s a | s -> a
+packager :: HasPackager s a => Lens' s a
+class HasOptdepends s a | s -> a
+optdepends :: HasOptdepends s a => Lens' s a
+class HasMakedepends s a | s -> a
+makedepends :: HasMakedepends s a => Lens' s a
+class HasMaintainers s a | s -> a
+maintainers :: HasMaintainers s a => Lens' s a
+class HasLicenses s a | s -> a
+licenses :: HasLicenses s a => Lens' s a
+class HasLastUpdate s a | s -> a
+lastUpdate :: HasLastUpdate s a => Lens' s a
+class HasInstalledSize s a | s -> a
+installedSize :: HasInstalledSize s a => Lens' s a
+class HasGroups s a | s -> a
+groups :: HasGroups s a => Lens' s a
+class HasFlageDate s a | s -> a
+flageDate :: HasFlageDate s a => Lens' s a
+class HasFilename s a | s -> a
+filename :: HasFilename s a => Lens' s a
+class HasEpoch s a | s -> a
+epoch :: HasEpoch s a => Lens' s a
+class HasDepends s a | s -> a
+depends :: HasDepends s a => Lens' s a
+class HasConflicts s a | s -> a
+conflicts :: HasConflicts s a => Lens' s a
+class HasCompressedSize s a | s -> a
+compressedSize :: HasCompressedSize s a => Lens' s a
+class HasCheckdepends s a | s -> a
+checkdepends :: HasCheckdepends s a => Lens' s a
+class HasBuildDate s a | s -> a
+buildDate :: HasBuildDate s a => Lens' s a
+class HasArch s a | s -> a
+arch :: HasArch s a => Lens' s a
+class HasPkgLastUpdate s a | s -> a
+pkgLastUpdate :: HasPkgLastUpdate s a => Lens' s a
+class HasFilesLastUpdate s a | s -> a
+filesLastUpdate :: HasFilesLastUpdate s a => Lens' s a
+class HasFilesCount s a | s -> a
+filesCount :: HasFilesCount s a => Lens' s a
+class HasFiles s a | s -> a
+files :: HasFiles s a => Lens' s a
+class HasDirCount s a | s -> a
+dirCount :: HasDirCount s a => Lens' s a
+class HasVersion s a | s -> a
+version :: HasVersion s a => Lens' s a
+class HasValid s a | s -> a
+valid :: HasValid s a => Lens' s a
+class HasResults s a | s -> a
+results :: HasResults s a => Lens' s a
+class HasLimit s a | s -> a
+limit :: HasLimit s a => Lens' s a
+class HasUrlPath s a | s -> a
+urlPath :: HasUrlPath s a => Lens' s a
+class HasPopularity s a | s -> a
+popularity :: HasPopularity s a => Lens' s a
+class HasPackageBaseID s a | s -> a
+packageBaseID :: HasPackageBaseID s a => Lens' s a
+class HasPackageBase s a | s -> a
+packageBase :: HasPackageBase s a => Lens' s a
+class HasOutOfDate s a | s -> a
+outOfDate :: HasOutOfDate s a => Lens' s a
+class HasNumVotes s a | s -> a
+numVotes :: HasNumVotes s a => Lens' s a
+class HasName s a | s -> a
+name :: HasName s a => Lens' s a
+class HasMaintainer s a | s -> a
+maintainer :: HasMaintainer s a => Lens' s a
+class HasLastModified s a | s -> a
+lastModified :: HasLastModified s a => Lens' s a
+class HasId s a | s -> a
+id :: HasId s a => Lens' s a
+class HasFirstSubmitted s a | s -> a
+firstSubmitted :: HasFirstSubmitted s a => Lens' s a
+class HasDescription s a | s -> a
+description :: HasDescription s a => Lens' s a
+class HasSearch s a | s -> a
+search :: HasSearch s a => Lens' s a
+class HasKeywords s a | s -> a
+keywords :: HasKeywords s a => Lens' s a
+class HasResultCount s a | s -> a
+resultCount :: HasResultCount s a => Lens' s a
+class HasError s a | s -> a
+error :: HasError s a => Lens' s a
+class HasAurType s a | s -> a
+aurType :: HasAurType s a => Lens' s a
+instance Web.ArchLinux.Types.Lens.HasResultCount (Web.ArchLinux.Types.AurResponse a) GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasError (Web.ArchLinux.Types.AurResponse a) (GHC.Maybe.Maybe Data.Text.Internal.Text)
+instance Web.ArchLinux.Types.Lens.HasAurType (Web.ArchLinux.Types.AurResponse a) Web.ArchLinux.Types.AurResponseType
+instance Web.ArchLinux.Types.Lens.HasResults (Web.ArchLinux.Types.AurResponse a) a
+instance Web.ArchLinux.Types.Lens.HasVersion (Web.ArchLinux.Types.AurResponse a) GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasSearch Web.ArchLinux.Types.AurInfo Web.ArchLinux.Types.AurSearch
+instance Web.ArchLinux.Types.Lens.HasKeywords Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasCheckdepends Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasConflicts Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasDepends Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasGroups Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasLicenses Web.ArchLinux.Types.AurInfo [Web.ArchLinux.Types.License]
+instance Web.ArchLinux.Types.Lens.HasMakedepends Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasOptdepends Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasProvides Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasReplaces Web.ArchLinux.Types.AurInfo [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasUrlPath Web.ArchLinux.Types.AurSearch Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasPopularity Web.ArchLinux.Types.AurSearch GHC.Types.Double
+instance Web.ArchLinux.Types.Lens.HasPackageBaseID Web.ArchLinux.Types.AurSearch GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasPackageBase Web.ArchLinux.Types.AurSearch Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasOutOfDate Web.ArchLinux.Types.AurSearch (GHC.Maybe.Maybe GHC.Types.Int)
+instance Web.ArchLinux.Types.Lens.HasNumVotes Web.ArchLinux.Types.AurSearch GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasName Web.ArchLinux.Types.AurSearch Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasMaintainer Web.ArchLinux.Types.AurSearch (GHC.Maybe.Maybe Data.Text.Internal.Text)
+instance Web.ArchLinux.Types.Lens.HasLastModified Web.ArchLinux.Types.AurSearch GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasId Web.ArchLinux.Types.AurSearch GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasFirstSubmitted Web.ArchLinux.Types.AurSearch GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasDescription Web.ArchLinux.Types.AurSearch Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasUrl Web.ArchLinux.Types.AurSearch (GHC.Maybe.Maybe Data.Text.Internal.Text)
+instance Web.ArchLinux.Types.Lens.HasVersion Web.ArchLinux.Types.AurSearch Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasVersion (Web.ArchLinux.Types.ArchLinuxResponse a) GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasValid (Web.ArchLinux.Types.ArchLinuxResponse a) GHC.Types.Bool
+instance Web.ArchLinux.Types.Lens.HasResults (Web.ArchLinux.Types.ArchLinuxResponse a) [a]
+instance Web.ArchLinux.Types.Lens.HasLimit (Web.ArchLinux.Types.ArchLinuxResponse a) GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasPkgLastUpdate Web.ArchLinux.Types.PackageFiles Data.Time.Clock.Internal.UTCTime.UTCTime
+instance Web.ArchLinux.Types.Lens.HasFilesLastUpdate Web.ArchLinux.Types.PackageFiles Data.Time.Clock.Internal.UTCTime.UTCTime
+instance Web.ArchLinux.Types.Lens.HasFilesCount Web.ArchLinux.Types.PackageFiles GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasFiles Web.ArchLinux.Types.PackageFiles [GHC.IO.FilePath]
+instance Web.ArchLinux.Types.Lens.HasDirCount Web.ArchLinux.Types.PackageFiles GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasArch Web.ArchLinux.Types.PackageFiles Web.ArchLinux.Types.Arch
+instance Web.ArchLinux.Types.Lens.HasPkgname Web.ArchLinux.Types.PackageFiles Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasRepo Web.ArchLinux.Types.PackageFiles Web.ArchLinux.Types.Repo
+instance Web.ArchLinux.Types.Lens.HasUrl Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasRepo Web.ArchLinux.Types.PackageInformation Web.ArchLinux.Types.Repo
+instance Web.ArchLinux.Types.Lens.HasReplaces Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasProvides Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasPkgver Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasPkgrel Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasPkgname Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasPkgdesc Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasPkgbase Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasPackager Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasOptdepends Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasMakedepends Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasMaintainers Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasLicenses Web.ArchLinux.Types.PackageInformation [Web.ArchLinux.Types.License]
+instance Web.ArchLinux.Types.Lens.HasLastUpdate Web.ArchLinux.Types.PackageInformation Data.Time.Clock.Internal.UTCTime.UTCTime
+instance Web.ArchLinux.Types.Lens.HasInstalledSize Web.ArchLinux.Types.PackageInformation GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasGroups Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasFlageDate Web.ArchLinux.Types.PackageInformation (GHC.Maybe.Maybe Data.Time.Clock.Internal.UTCTime.UTCTime)
+instance Web.ArchLinux.Types.Lens.HasFilename Web.ArchLinux.Types.PackageInformation Data.Text.Internal.Text
+instance Web.ArchLinux.Types.Lens.HasEpoch Web.ArchLinux.Types.PackageInformation GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasDepends Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasConflicts Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasCompressedSize Web.ArchLinux.Types.PackageInformation GHC.Types.Int
+instance Web.ArchLinux.Types.Lens.HasCheckdepends Web.ArchLinux.Types.PackageInformation [Data.Text.Internal.Text]
+instance Web.ArchLinux.Types.Lens.HasBuildDate Web.ArchLinux.Types.PackageInformation Data.Time.Clock.Internal.UTCTime.UTCTime
+instance Web.ArchLinux.Types.Lens.HasArch Web.ArchLinux.Types.PackageInformation Web.ArchLinux.Types.Arch
