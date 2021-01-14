@@ -10,8 +10,8 @@
           overlays = [ self.overlay ];
         };
       in with pkgs; {
-        devShell = archlinux-web-dev.envFunc { withHoogle = true; };
-        defaultPackage = archlinux-web;
+        devShell = arch-web-dev.envFunc { withHoogle = true; };
+        defaultPackage = arch-web;
       }) // {
         overlay = self: super:
           let
@@ -22,13 +22,13 @@
                   "--html-location='https://hackage.haskell.org/package/$pkg-$version/docs'"
                 ];
               });
-            archlinux-web = with super.haskell.lib;
+            arch-web = with super.haskell.lib;
               linkHaddockToHackage (disableLibraryProfiling
-                (dontCheck (hpkgs.callCabal2nix "archlinux-web" ./. { })));
+                (dontCheck (hpkgs.callCabal2nix "arch-web" ./. { })));
           in with super;
           with haskell.lib; {
-            inherit archlinux-web;
-            archlinux-web-dev = addBuildTools archlinux-web [
+            inherit arch-web;
+            arch-web-dev = addBuildTools arch-web [
               haskell-language-server
               cabal-install
             ];

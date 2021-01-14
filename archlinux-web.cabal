@@ -1,5 +1,5 @@
 cabal-version:   2.2
-name:            archlinux-web
+name:            arch-web
 version:         0.1.0
 synopsis:        Arch Linux official and AUR web interface binding
 description:
@@ -13,8 +13,8 @@ author:          berberman
 maintainer:      berberman <berberman@yandex.com>
 copyright:       Copyright (c) berberman 2021
 stability:       alpha
-homepage:        https://github.com/berberman/archlinux-web
-bug-reports:     https://github.com/berberman/archlinux-web/issues
+homepage:        https://github.com/berberman/arch-web
+bug-reports:     https://github.com/berberman/arch-web/issues
 extra-doc-files:
   CHANGELOG.md
   README.md
@@ -91,4 +91,4 @@ library
 
 source-repository head
   type:     git
-  location: https://github.com/berberman/archlinux-web
+  location: https://github.com/berberman/arch-web
