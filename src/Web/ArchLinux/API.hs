@@ -86,7 +86,7 @@ instance HasBaseUrl 'Aur where
 runAPIClient :: forall s a. HasBaseUrl s => Manager -> APIClient s a -> IO (Either ClientError a)
 runAPIClient manager m = runClientM (unWrapClientM m) $ mkClientEnv manager $ getBaseUrl @s
 
--- | Like 'runAPIClient', but creates a 'Manager'/
+-- | Like 'runAPIClient', but creates a 'Manager'.
 runAPIClient' :: HasBaseUrl s => APIClient s a -> IO (Either ClientError a)
 runAPIClient' m = newTlsManager >>= flip runAPIClient m
 
@@ -110,13 +110,13 @@ data SearchOptions = SearchOptions
 -- | An empty options value for convenient.
 --
 -- For example,
--- @
---  let options =
---        emptySearchOptions
---          & nameOrDescription ?~ "kea"
---          & targetRepositories .~ [Community, CommunityTesting]
--- searchPackage options
--- @
+-- 
+-- > let options =
+-- >       emptySearchOptions
+-- >         & nameOrDescription ?~ "kea"
+-- >         & targetRepositories .~ [Community, CommunityTesting]
+-- > searchPackage options
+-- 
 -- searchs packages whose names or descriptions contain @kea@, from @Community@ or @Community-Testing@.
 emptySearchOptions :: SearchOptions
 emptySearchOptions = SearchOptions Nothing Nothing Nothing [] [] Nothing Nothing Nothing

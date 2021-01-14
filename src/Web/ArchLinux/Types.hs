@@ -218,7 +218,7 @@ data AurSearch = AurSearch
     _packageBase :: Text,
     _version :: Text,
     _description :: Maybe Text,
-    -- | @URL@
+    -- | URL
     _url :: Maybe Text,
     _numVotes :: Int,
     _popularity :: Double,
@@ -239,15 +239,15 @@ data AurSearch = AurSearch
 -- This data type extends 'AurSearch' informally,
 -- so it includes '_search' as a member.
 data AurInfo = AurInfo
-  { -- | @ID, Name, PackageBaseID, ...@
+  { -- | ID, Name, PackageBaseID, ...
     _search :: AurSearch,
-    -- | @Depends@
+    -- | Depends
     _depends :: [Text],
-    -- | @MakeDepends@
+    -- | MakeDepends
     _makedepends :: [Text],
-    -- | @OptDepends@
+    -- | OptDepends
     _optdepends :: [Text],
-    -- | @CheckDepends@
+    -- | CheckDepends
     _checkdepends :: [Text],
     _conflicts :: [Text],
     _provides :: [Text],
@@ -303,10 +303,12 @@ data AurResponseType = Search | Multiinfo | Error
 -- | Response data type of AUR API.
 data AurResponse a = AurResponse
   { _version :: Int,
+    -- | type
     _aurType :: AurResponseType,
+    -- | resultcount
     _resultCount :: Int,
     _results :: a,
-    -- | Available when '_type' equals to 'AurResponseType.Error'.
+    -- | Available when 'aurType' equals to 'AurResponseType.Error'.
     _error :: Maybe Text
   }
   deriving stock (Show, Eq, Ord, Functor, Generic)
