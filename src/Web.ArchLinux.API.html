@@ -308,7 +308,7 @@ forall a b. (a -&gt; b) -&gt; a -&gt; b
 forall (k :: APIType). HasBaseUrl k =&gt; BaseUrl
 </span><a href="Web.ArchLinux.API.html#getBaseUrl"><span class="hs-identifier hs-var">getBaseUrl</span></a></span><span> </span><span class="hs-glyph">@</span><span class="annot"><a href="#local-6989586621679537204"><span class="hs-identifier hs-type">s</span></a></span><span>
 </span><span id="line-88"></span><span>
-</span><span id="line-89"></span><span class="hs-comment">-- | Like 'runAPIClient', but creates a 'Manager'/</span><span>
+</span><span id="line-89"></span><span class="hs-comment">-- | Like 'runAPIClient', but creates a 'Manager'.</span><span>
 </span><span id="line-90"></span><span id="local-6989586621679537066"><span id="local-6989586621679537067"><span class="annot"><a href="Web.ArchLinux.API.html#runAPIClient%27"><span class="hs-identifier hs-type">runAPIClient'</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#HasBaseUrl"><span class="hs-identifier hs-type">HasBaseUrl</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679537067"><span class="hs-identifier hs-type">s</span></a></span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#APIClient"><span class="hs-identifier hs-type">APIClient</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679537067"><span class="hs-identifier hs-type">s</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679537066"><span class="hs-identifier hs-type">a</span></a></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">IO</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Either</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">ClientError</span></span><span> </span><span class="annot"><a href="#local-6989586621679537066"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span><span>
 </span><span id="line-91"></span><span id="runAPIClient%27"><span class="annot"><span class="annottext">runAPIClient' :: APIClient s a -&gt; IO (Either ClientError a)
 </span><a href="Web.ArchLinux.API.html#runAPIClient%27"><span class="hs-identifier hs-var hs-var">runAPIClient'</span></a></span></span><span> </span><span id="local-6989586621679537065"><span class="annot"><span class="annottext">APIClient s a
@@ -426,13 +426,13 @@ $cshowsPrec :: Int -&gt; SearchOptions -&gt; ShowS
 </span><span id="line-110"></span><span class="hs-comment">-- | An empty options value for convenient.</span><span>
 </span><span id="line-111"></span><span class="hs-comment">--</span><span>
 </span><span id="line-112"></span><span class="hs-comment">-- For example,</span><span>
-</span><span id="line-113"></span><span class="hs-comment">-- @</span><span>
-</span><span id="line-114"></span><span class="hs-comment">--  let options =</span><span>
-</span><span id="line-115"></span><span class="hs-comment">--        emptySearchOptions</span><span>
-</span><span id="line-116"></span><span class="hs-comment">--          &amp; nameOrDescription ?~ &quot;kea&quot;</span><span>
-</span><span id="line-117"></span><span class="hs-comment">--          &amp; targetRepositories .~ [Community, CommunityTesting]</span><span>
-</span><span id="line-118"></span><span class="hs-comment">-- searchPackage options</span><span>
-</span><span id="line-119"></span><span class="hs-comment">-- @</span><span>
+</span><span id="line-113"></span><span class="hs-comment">-- </span><span>
+</span><span id="line-114"></span><span class="hs-comment">-- &gt; let options =</span><span>
+</span><span id="line-115"></span><span class="hs-comment">-- &gt;       emptySearchOptions</span><span>
+</span><span id="line-116"></span><span class="hs-comment">-- &gt;         &amp; nameOrDescription ?~ &quot;kea&quot;</span><span>
+</span><span id="line-117"></span><span class="hs-comment">-- &gt;         &amp; targetRepositories .~ [Community, CommunityTesting]</span><span>
+</span><span id="line-118"></span><span class="hs-comment">-- &gt; searchPackage options</span><span>
+</span><span id="line-119"></span><span class="hs-comment">-- </span><span>
 </span><span id="line-120"></span><span class="hs-comment">-- searchs packages whose names or descriptions contain @kea@, from @Community@ or @Community-Testing@.</span><span>
 </span><span id="line-121"></span><span class="annot"><a href="Web.ArchLinux.API.html#emptySearchOptions"><span class="hs-identifier hs-type">emptySearchOptions</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.API.html#SearchOptions"><span class="hs-identifier hs-type">SearchOptions</span></a></span><span>
 </span><span id="line-122"></span><span id="emptySearchOptions"><span class="annot"><span class="annottext">emptySearchOptions :: SearchOptions

@@ -128,9 +128,7 @@ AurSearch :: Int -> Text -> Int -> Text -> Text -> Maybe Text -> Maybe Text -> I
 [$sel:_version:AurSearch] :: AurSearch -> Text
 [$sel:_description:AurSearch] :: AurSearch -> Maybe Text
 
--- | <pre>
---   URL
---   </pre>
+-- | URL
 [$sel:_url:AurSearch] :: AurSearch -> Maybe Text
 [$sel:_numVotes:AurSearch] :: AurSearch -> Int
 [$sel:_popularity:AurSearch] :: AurSearch -> Double
@@ -153,29 +151,19 @@ AurSearch :: Int -> Text -> Int -> Text -> Text -> Maybe Text -> Maybe Text -> I
 data AurInfo
 AurInfo :: AurSearch -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [Text] -> [License] -> [Text] -> AurInfo
 
--- | <pre>
---   ID, Name, PackageBaseID, ...
---   </pre>
+-- | ID, Name, PackageBaseID, ...
 [$sel:_search:AurInfo] :: AurInfo -> AurSearch
 
--- | <pre>
---   Depends
---   </pre>
+-- | Depends
 [$sel:_depends:AurInfo] :: AurInfo -> [Text]
 
--- | <pre>
---   MakeDepends
---   </pre>
+-- | MakeDepends
 [$sel:_makedepends:AurInfo] :: AurInfo -> [Text]
 
--- | <pre>
---   OptDepends
---   </pre>
+-- | OptDepends
 [$sel:_optdepends:AurInfo] :: AurInfo -> [Text]
 
--- | <pre>
---   CheckDepends
---   </pre>
+-- | CheckDepends
 [$sel:_checkdepends:AurInfo] :: AurInfo -> [Text]
 [$sel:_conflicts:AurInfo] :: AurInfo -> [Text]
 [$sel:_provides:AurInfo] :: AurInfo -> [Text]
@@ -194,11 +182,15 @@ Error :: AurResponseType
 data AurResponse a
 AurResponse :: Int -> AurResponseType -> Int -> a -> Maybe Text -> AurResponse a
 [$sel:_version:AurResponse] :: AurResponse a -> Int
+
+-- | type
 [$sel:_aurType:AurResponse] :: AurResponse a -> AurResponseType
+
+-- | resultcount
 [$sel:_resultCount:AurResponse] :: AurResponse a -> Int
 [$sel:_results:AurResponse] :: AurResponse a -> a
 
--- | Available when <tt>_type</tt> equals to <a>Error</a>.
+-- | Available when <tt>aurType</tt> equals to <a>Error</a>.
 [$sel:_error:AurResponse] :: AurResponse a -> Maybe Text
 instance Data.Aeson.Types.ToJSON.ToJSON Web.ArchLinux.Types.Repo
 instance Data.Aeson.Types.FromJSON.FromJSON Web.ArchLinux.Types.Repo
@@ -308,7 +300,7 @@ getBaseUrl :: HasBaseUrl k => BaseUrl
 --   calls <a>runClientM</a>.
 runAPIClient :: forall s a. HasBaseUrl s => Manager -> APIClient s a -> IO (Either ClientError a)
 
--- | Like <a>runAPIClient</a>, but creates a <a>Manager</a>/
+-- | Like <a>runAPIClient</a>, but creates a <a>Manager</a>.
 runAPIClient' :: HasBaseUrl s => APIClient s a -> IO (Either ClientError a)
 
 -- | Options available in searching packages in Arch Linux official
@@ -328,11 +320,18 @@ SearchOptions :: Maybe Text -> Maybe Text -> Maybe Text -> [Repo] -> [Arch] -> M
 
 -- | An empty options value for convenient.
 --   
---   For example, <tt> let options = emptySearchOptions &amp;
---   nameOrDescription ?~ "kea" &amp; targetRepositories .~ [Community,
---   CommunityTesting] searchPackage options </tt> searchs packages whose
---   names or descriptions contain <tt>kea</tt>, from <tt>Community</tt> or
---   <tt>Community-Testing</tt>.
+--   For example,
+--   
+--   <pre>
+--   let options =
+--         emptySearchOptions
+--           &amp; nameOrDescription ?~ "kea"
+--           &amp; targetRepositories .~ [Community, CommunityTesting]
+--   searchPackage options
+--   </pre>
+--   
+--   searchs packages whose names or descriptions contain <tt>kea</tt>,
+--   from <tt>Community</tt> or <tt>Community-Testing</tt>.
 emptySearchOptions :: SearchOptions
 
 -- | Gets details of an exact package.
@@ -386,8 +385,6 @@ instance Web.ArchLinux.API.HasBaseUrl 'Web.ArchLinux.API.Aur
 
 -- | Arch Linux official repositories web interfaces and AUR web
 --   interfaces.
---   
---   See <a>Web.ArchLinux.API</a> for details.
 module Web.ArchLinux
 
 

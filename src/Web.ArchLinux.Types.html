@@ -1227,7 +1227,7 @@ $cfrom :: forall a x. ArchLinuxResponse a -&gt; Rep (ArchLinuxResponse a) x
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_version%3AAurSearch"><span class="hs-identifier hs-var hs-var">_version</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
 </span><span id="line-220"></span><span>    </span><span id="%24sel%3A_description%3AAurSearch"><span class="annot"><span class="annottext">AurSearch -&gt; Maybe Text
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_description%3AAurSearch"><span class="hs-identifier hs-var hs-var">_description</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
-</span><span id="line-221"></span><span>    </span><span class="hs-comment">-- | @URL@</span><span>
+</span><span id="line-221"></span><span>    </span><span class="hs-comment">-- | URL</span><span>
 </span><span id="line-222"></span><span>    </span><span id="%24sel%3A_url%3AAurSearch"><span class="annot"><span class="annottext">AurSearch -&gt; Maybe Text
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_url%3AAurSearch"><span class="hs-identifier hs-var hs-var">_url</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">,</span><span>
 </span><span id="line-223"></span><span>    </span><span id="%24sel%3A_numVotes%3AAurSearch"><span class="annot"><span class="annottext">AurSearch -&gt; Int
@@ -1359,19 +1359,19 @@ $ctoJSON :: AurSearch -&gt; Value
 </span><span id="line-239"></span><span class="hs-comment">-- This data type extends 'AurSearch' informally,</span><span>
 </span><span id="line-240"></span><span class="hs-comment">-- so it includes '_search' as a member.</span><span>
 </span><span id="line-241"></span><span id="local-6989586621679536206"><span id="local-6989586621679536207"></span></span><span class="hs-keyword">data</span><span> </span><span id="AurInfo"><span class="annot"><a href="Web.ArchLinux.Types.html#AurInfo"><span class="hs-identifier hs-var">AurInfo</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="AurInfo"><span class="annot"><a href="Web.ArchLinux.Types.html#AurInfo"><span class="hs-identifier hs-var">AurInfo</span></a></span></span><span>
-</span><span id="line-242"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="hs-comment">-- | @ID, Name, PackageBaseID, ...@</span><span>
+</span><span id="line-242"></span><span>  </span><span class="hs-special">{</span><span> </span><span class="hs-comment">-- | ID, Name, PackageBaseID, ...</span><span>
 </span><span id="line-243"></span><span>    </span><span id="%24sel%3A_search%3AAurInfo"><span class="annot"><span class="annottext">AurInfo -&gt; AurSearch
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_search%3AAurInfo"><span class="hs-identifier hs-var hs-var">_search</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#AurSearch"><span class="hs-identifier hs-type">AurSearch</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-244"></span><span>    </span><span class="hs-comment">-- | @Depends@</span><span>
+</span><span id="line-244"></span><span>    </span><span class="hs-comment">-- | Depends</span><span>
 </span><span id="line-245"></span><span>    </span><span id="%24sel%3A_depends%3AAurInfo"><span class="annot"><span class="annottext">AurInfo -&gt; [Text]
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_depends%3AAurInfo"><span class="hs-identifier hs-var hs-var">_depends</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">]</span><span class="hs-special">,</span><span>
-</span><span id="line-246"></span><span>    </span><span class="hs-comment">-- | @MakeDepends@</span><span>
+</span><span id="line-246"></span><span>    </span><span class="hs-comment">-- | MakeDepends</span><span>
 </span><span id="line-247"></span><span>    </span><span id="%24sel%3A_makedepends%3AAurInfo"><span class="annot"><span class="annottext">AurInfo -&gt; [Text]
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_makedepends%3AAurInfo"><span class="hs-identifier hs-var hs-var">_makedepends</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">]</span><span class="hs-special">,</span><span>
-</span><span id="line-248"></span><span>    </span><span class="hs-comment">-- | @OptDepends@</span><span>
+</span><span id="line-248"></span><span>    </span><span class="hs-comment">-- | OptDepends</span><span>
 </span><span id="line-249"></span><span>    </span><span id="%24sel%3A_optdepends%3AAurInfo"><span class="annot"><span class="annottext">AurInfo -&gt; [Text]
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_optdepends%3AAurInfo"><span class="hs-identifier hs-var hs-var">_optdepends</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">]</span><span class="hs-special">,</span><span>
-</span><span id="line-250"></span><span>    </span><span class="hs-comment">-- | @CheckDepends@</span><span>
+</span><span id="line-250"></span><span>    </span><span class="hs-comment">-- | CheckDepends</span><span>
 </span><span id="line-251"></span><span>    </span><span id="%24sel%3A_checkdepends%3AAurInfo"><span class="annot"><span class="annottext">AurInfo -&gt; [Text]
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_checkdepends%3AAurInfo"><span class="hs-identifier hs-var hs-var">_checkdepends</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span class="hs-special">]</span><span class="hs-special">,</span><span>
 </span><span id="line-252"></span><span>    </span><span id="%24sel%3A_conflicts%3AAurInfo"><span class="annot"><span class="annottext">AurInfo -&gt; [Text]
@@ -1884,17 +1884,19 @@ $ctoJSON :: AurResponseType -&gt; Value
 </span><span id="line-304"></span><span id="local-6989586621679536062"><span id="local-6989586621679536063"></span></span><span class="hs-keyword">data</span><span> </span><span id="AurResponse"><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-var">AurResponse</span></a></span></span><span> </span><span id="local-6989586621679536781"><span class="annot"><a href="#local-6989586621679536781"><span class="hs-identifier hs-type">a</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span id="AurResponse"><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-var">AurResponse</span></a></span></span><span>
 </span><span id="line-305"></span><span>  </span><span class="hs-special">{</span><span> </span><span id="%24sel%3A_version%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; Int
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_version%3AAurResponse"><span class="hs-identifier hs-var hs-var">_version</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span>
-</span><span id="line-306"></span><span>    </span><span id="%24sel%3A_aurType%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; AurResponseType
+</span><span id="line-306"></span><span>    </span><span class="hs-comment">-- | type</span><span>
+</span><span id="line-307"></span><span>    </span><span id="%24sel%3A_aurType%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; AurResponseType
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_aurType%3AAurResponse"><span class="hs-identifier hs-var hs-var">_aurType</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponseType"><span class="hs-identifier hs-type">AurResponseType</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-307"></span><span>    </span><span id="%24sel%3A_resultCount%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; Int
+</span><span id="line-308"></span><span>    </span><span class="hs-comment">-- | resultcount</span><span>
+</span><span id="line-309"></span><span>    </span><span id="%24sel%3A_resultCount%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; Int
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_resultCount%3AAurResponse"><span class="hs-identifier hs-var hs-var">_resultCount</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Int</span></span><span class="hs-special">,</span><span>
-</span><span id="line-308"></span><span>    </span><span id="%24sel%3A_results%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; a
+</span><span id="line-310"></span><span>    </span><span id="%24sel%3A_results%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; a
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_results%3AAurResponse"><span class="hs-identifier hs-var hs-var">_results</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><a href="#local-6989586621679536781"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-309"></span><span>    </span><span class="hs-comment">-- | Available when '_type' equals to 'AurResponseType.Error'.</span><span>
-</span><span id="line-310"></span><span>    </span><span id="%24sel%3A_error%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; Maybe Text
+</span><span id="line-311"></span><span>    </span><span class="hs-comment">-- | Available when 'aurType' equals to 'AurResponseType.Error'.</span><span>
+</span><span id="line-312"></span><span>    </span><span id="%24sel%3A_error%3AAurResponse"><span class="annot"><span class="annottext">AurResponse a -&gt; Maybe Text
 </span><a href="Web.ArchLinux.Types.html#%24sel%3A_error%3AAurResponse"><span class="hs-identifier hs-var hs-var">_error</span></a></span></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">Maybe</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">Text</span></span><span>
-</span><span id="line-311"></span><span>  </span><span class="hs-special">}</span><span>
-</span><span id="line-312"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679536050"><span id="local-6989586621679536052"><span id="local-6989586621679536054"><span class="annot"><span class="annottext">Int -&gt; AurResponse a -&gt; String -&gt; String
+</span><span id="line-313"></span><span>  </span><span class="hs-special">}</span><span>
+</span><span id="line-314"></span><span>  </span><span class="hs-keyword">deriving</span><span> </span><span class="annot"><span class="hs-keyword">stock</span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679536050"><span id="local-6989586621679536052"><span id="local-6989586621679536054"><span class="annot"><span class="annottext">Int -&gt; AurResponse a -&gt; String -&gt; String
 [AurResponse a] -&gt; String -&gt; String
 AurResponse a -&gt; String
 (Int -&gt; AurResponse a -&gt; String -&gt; String)
@@ -1990,9 +1992,9 @@ forall a x. AurResponse a -&gt; Rep (AurResponse a) x
 $cto :: forall a x. Rep (AurResponse a) x -&gt; AurResponse a
 $cfrom :: forall a x. AurResponse a -&gt; Rep (AurResponse a) x
 </span><span class="hs-identifier hs-var hs-var hs-var hs-var">Generic</span></span><span class="hs-special">)</span><span>
-</span><span id="line-313"></span><span>
-</span><span id="line-314"></span><span id="local-6989586621679536024"><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679536021"><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679536024"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-type">AurResponse</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679536024"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-315"></span><span>  </span><span id="local-6989586621679536020"><span class="annot"><span class="annottext">parseJSON :: Value -&gt; Parser (AurResponse a)
+</span><span id="line-315"></span><span>
+</span><span id="line-316"></span><span id="local-6989586621679536024"><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679536021"><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679536024"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">FromJSON</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-type">AurResponse</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679536024"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-317"></span><span>  </span><span id="local-6989586621679536020"><span class="annot"><span class="annottext">parseJSON :: Value -&gt; Parser (AurResponse a)
 </span><a href="#local-6989586621679536020"><span class="hs-identifier hs-var hs-var hs-var hs-var">parseJSON</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">String
 -&gt; (Object -&gt; Parser (AurResponse a))
 -&gt; Value
@@ -2007,37 +2009,37 @@ forall a. String -&gt; (Object -&gt; Parser a) -&gt; Value -&gt; Parser a
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679536019"><span class="annot"><span class="annottext">Object
 </span><a href="#local-6989586621679536019"><span class="hs-identifier hs-var">o</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-keyword">do</span><span>
-</span><span id="line-316"></span><span>    </span><span id="local-6989586621679536018"><span class="annot"><span class="annottext">Int
+</span><span id="line-318"></span><span>    </span><span id="local-6989586621679536018"><span class="annot"><span class="annottext">Int
 </span><a href="#local-6989586621679536018"><span class="hs-identifier hs-var">_version</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Object
 </span><a href="#local-6989586621679536019"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Text -&gt; Parser Int
 forall a. FromJSON a =&gt; Object -&gt; Text -&gt; Parser a
 </span><span class="hs-operator hs-var">.:</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;version&quot;</span></span><span>
-</span><span id="line-317"></span><span>    </span><span id="local-6989586621679536016"><span class="annot"><span class="annottext">AurResponseType
+</span><span id="line-319"></span><span>    </span><span id="local-6989586621679536016"><span class="annot"><span class="annottext">AurResponseType
 </span><a href="#local-6989586621679536016"><span class="hs-identifier hs-var">_aurType</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Object
 </span><a href="#local-6989586621679536019"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Text -&gt; Parser AurResponseType
 forall a. FromJSON a =&gt; Object -&gt; Text -&gt; Parser a
 </span><span class="hs-operator hs-var">.:</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;type&quot;</span></span><span>
-</span><span id="line-318"></span><span>    </span><span id="local-6989586621679536015"><span class="annot"><span class="annottext">Int
+</span><span id="line-320"></span><span>    </span><span id="local-6989586621679536015"><span class="annot"><span class="annottext">Int
 </span><a href="#local-6989586621679536015"><span class="hs-identifier hs-var">_resultCount</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Object
 </span><a href="#local-6989586621679536019"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Text -&gt; Parser Int
 forall a. FromJSON a =&gt; Object -&gt; Text -&gt; Parser a
 </span><span class="hs-operator hs-var">.:</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;resultcount&quot;</span></span><span>
-</span><span id="line-319"></span><span>    </span><span id="local-6989586621679536014"><span class="annot"><span class="annottext">a
+</span><span id="line-321"></span><span>    </span><span id="local-6989586621679536014"><span class="annot"><span class="annottext">a
 </span><a href="#local-6989586621679536014"><span class="hs-identifier hs-var">_results</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Object
 </span><a href="#local-6989586621679536019"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Text -&gt; Parser a
 forall a. FromJSON a =&gt; Object -&gt; Text -&gt; Parser a
 </span><span class="hs-operator hs-var">.:</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;results&quot;</span></span><span>
-</span><span id="line-320"></span><span>    </span><span id="local-6989586621679536013"><span class="annot"><span class="annottext">Maybe Text
+</span><span id="line-322"></span><span>    </span><span id="local-6989586621679536013"><span class="annot"><span class="annottext">Maybe Text
 </span><a href="#local-6989586621679536013"><span class="hs-identifier hs-var">_error</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">Object
 </span><a href="#local-6989586621679536019"><span class="hs-identifier hs-var">o</span></a></span><span> </span><span class="annot"><span class="annottext">Object -&gt; Text -&gt; Parser (Maybe Text)
 forall a. FromJSON a =&gt; Object -&gt; Text -&gt; Parser (Maybe a)
 </span><span class="hs-operator hs-var">.:?</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;error&quot;</span></span><span>
-</span><span id="line-321"></span><span>    </span><span class="annot"><span class="annottext">AurResponse a -&gt; Parser (AurResponse a)
+</span><span id="line-323"></span><span>    </span><span class="annot"><span class="annottext">AurResponse a -&gt; Parser (AurResponse a)
 forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
 </span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">AurResponse :: forall a.
 Int -&gt; AurResponseType -&gt; Int -&gt; a -&gt; Maybe Text -&gt; AurResponse a
@@ -2056,9 +2058,9 @@ $sel:_resultCount:AurResponse :: Int
 $sel:_aurType:AurResponse :: AurResponseType
 $sel:_version:AurResponse :: Int
 </span><a href="#local-6989586621679536013"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span><span class="hs-special">}</span></span><span>
-</span><span id="line-322"></span><span>
-</span><span id="line-323"></span><span id="local-6989586621679536012"><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679536005"><span id="local-6989586621679536007"><span id="local-6989586621679536009"><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679536012"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-type">AurResponse</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679536012"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
-</span><span id="line-324"></span><span>  </span><span id="local-6989586621679536004"><span class="annot"><span class="annottext">toJSON :: AurResponse a -&gt; Value
+</span><span id="line-324"></span><span>
+</span><span id="line-325"></span><span id="local-6989586621679536012"><span class="hs-keyword">instance</span><span> </span><span id="local-6989586621679536005"><span id="local-6989586621679536007"><span id="local-6989586621679536009"><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="annot"><a href="#local-6989586621679536012"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">ToJSON</span></span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-type">AurResponse</span></a></span><span> </span><span class="annot"><a href="#local-6989586621679536012"><span class="hs-identifier hs-type">a</span></a></span><span class="hs-special">)</span></span></span></span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-326"></span><span>  </span><span id="local-6989586621679536004"><span class="annot"><span class="annottext">toJSON :: AurResponse a -&gt; Value
 </span><a href="#local-6989586621679536004"><span class="hs-identifier hs-var hs-var hs-var hs-var">toJSON</span></a></span></span><span> </span><span class="annot"><a href="Web.ArchLinux.Types.html#AurResponse"><span class="hs-identifier hs-type">AurResponse</span></a></span><span> </span><span class="hs-special">{</span><span id="local-6989586621679535999"><span id="local-6989586621679536000"><span id="local-6989586621679536001"><span id="local-6989586621679536002"><span id="local-6989586621679536003"><span class="annot"><span class="annottext">a
 Int
 Maybe Text
@@ -2074,41 +2076,41 @@ $sel:_resultCount:AurResponse :: forall a. AurResponse a -&gt; Int
 $sel:_aurType:AurResponse :: forall a. AurResponse a -&gt; AurResponseType
 $sel:_version:AurResponse :: forall a. AurResponse a -&gt; Int
 </span><a href="#local-6989586621679535999"><span class="hs-glyph hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var hs-var">..</span></a></span></span></span></span></span></span><span class="hs-special">}</span><span> </span><span class="hs-glyph">=</span><span>
-</span><span id="line-325"></span><span>    </span><span class="annot"><span class="annottext">[Pair] -&gt; Value
+</span><span id="line-327"></span><span>    </span><span class="annot"><span class="annottext">[Pair] -&gt; Value
 </span><span class="hs-identifier hs-var">object</span></span><span> </span><span class="annot"><span class="annottext">([Pair] -&gt; Value) -&gt; [Pair] -&gt; Value
 forall a b. (a -&gt; b) -&gt; a -&gt; b
 </span><span class="hs-operator hs-var">$</span></span><span>
-</span><span id="line-326"></span><span>      </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Text
+</span><span id="line-328"></span><span>      </span><span class="hs-special">[</span><span> </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;version&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Int -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><a href="#local-6989586621679536003"><span class="hs-identifier hs-var">_version</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-327"></span><span>        </span><span class="annot"><span class="annottext">Text
+</span><span id="line-329"></span><span>        </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;type&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; AurResponseType -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">AurResponseType
 </span><a href="#local-6989586621679536002"><span class="hs-identifier hs-var">_aurType</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-328"></span><span>        </span><span class="annot"><span class="annottext">Text
+</span><span id="line-330"></span><span>        </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;resultcount&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Int -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Int
 </span><a href="#local-6989586621679536001"><span class="hs-identifier hs-var">_resultCount</span></a></span><span class="hs-special">,</span><span>
-</span><span id="line-329"></span><span>        </span><span class="annot"><span class="annottext">Text
+</span><span id="line-331"></span><span>        </span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;results&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; a -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">a
 </span><a href="#local-6989586621679536000"><span class="hs-identifier hs-var">_results</span></a></span><span>
-</span><span id="line-330"></span><span>      </span><span class="hs-special">]</span><span>
-</span><span id="line-331"></span><span>        </span><span class="annot"><span class="annottext">[Pair] -&gt; [Pair] -&gt; [Pair]
+</span><span id="line-332"></span><span>      </span><span class="hs-special">]</span><span>
+</span><span id="line-333"></span><span>        </span><span class="annot"><span class="annottext">[Pair] -&gt; [Pair] -&gt; [Pair]
 forall a. Semigroup a =&gt; a -&gt; a -&gt; a
 </span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">Maybe Text
 </span><a href="#local-6989586621679535999"><span class="hs-identifier hs-var">_error</span></a></span><span> </span><span class="hs-keyword">of</span><span>
-</span><span id="line-332"></span><span>          </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679535998"><span class="annot"><span class="annottext">Text
+</span><span id="line-334"></span><span>          </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679535998"><span class="annot"><span class="annottext">Text
 </span><a href="#local-6989586621679535998"><span class="hs-identifier hs-var">err</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Text
 </span><span class="hs-string">&quot;error&quot;</span></span><span> </span><span class="annot"><span class="annottext">Text -&gt; Text -&gt; Pair
 forall kv v. (KeyValue kv, ToJSON v) =&gt; Text -&gt; v -&gt; kv
 </span><span class="hs-operator hs-var">.=</span></span><span> </span><span class="annot"><span class="annottext">Text
 </span><a href="#local-6989586621679535998"><span class="hs-identifier hs-var">err</span></a></span><span class="hs-special">]</span><span>
-</span><span id="line-333"></span><span>          </span><span class="annot"><span class="annottext">Maybe Text
+</span><span id="line-335"></span><span>          </span><span class="annot"><span class="annottext">Maybe Text
 </span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span></span><span>
-</span><span id="line-334"></span></pre></body></html>
+</span><span id="line-336"></span></pre></body></html>
