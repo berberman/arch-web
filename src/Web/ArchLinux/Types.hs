@@ -1,7 +1,32 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
-module Web.ArchLinux.Types where
+-- | Copyright: (c) 2021 berberman
+-- SPDX-License-Identifier: MIT
+-- Maintainer: berberman <berberman@yandex.com>
+-- Stability: experimental
+-- Portability: portable
+-- This module defines types and their serializations used in API.
+--
+-- Fields' names are prefixed with @_@ for lenses generation,
+-- consider using "Web.ArchLinux.Types.Lens" to access data types smoothly.
+module Web.ArchLinux.Types
+  ( -- * Arch Linux official
+    Repo (..),
+    Arch (..),
+    License (..),
+    PackageInformation (..),
+    PackageFiles (..),
+    Flagged (..),
+    ArchLinuxResponse (..),
+
+    -- * AUR
+    AurSearch (..),
+    AurInfo (..),
+    AurResponseType (..),
+    AurResponse (..),
+  )
+where
 
 import Data.Aeson
 import Data.Char (toUpper)
@@ -37,6 +62,8 @@ instance StringModifier AurModifier where
 type AurJSON = CustomJSON '[FieldLabelModifier (StripPrefix "_", AurModifier)]
 
 -----------------------------------------------------------------------------
+
+-- | Official repositories.
 data Repo
   = Core
   | Extra
@@ -55,6 +82,7 @@ instance ToHttpApiData Repo where
       T.cons (toUpper h1) s1 <> "-" <> T.cons (toUpper h2) s2
     _ -> undefined
 
+-- | Official architectures.
 data Arch
   = Any
   | I686
@@ -65,6 +93,7 @@ data Arch
 instance ToHttpApiData Arch where
   toQueryParam = toQueryParamViaJSON
 
+-- | Liceses defined in <https://archlinux.org/packages/core/any/licenses/>.
 data License
   = AGPL3
   | Apache
@@ -109,6 +138,7 @@ instance FromJSON License where
       Just c -> pure $ Custom c
       _ -> genericParseJSON licenseJSONOption (String $ T.stripStart txt)
 
+-- | Package details returned by 'Web.ArchLinux.API.getPackageDetails'.
 data PackageInformation = PackageInformation
   { _pkgname :: Text,
     _pkgbase :: Text,
@@ -140,6 +170,7 @@ data PackageInformation = PackageInformation
   deriving stock (Show, Eq, Ord, Generic)
   deriving (FromJSON, ToJSON) via ArchLinuxJSON PackageInformation
 
+-- | Package files list returned by 'Web.ArchLinux.API.getPackageFiles'
 data PackageFiles = PackageFiles
   { _pkgname :: Text,
     _repo :: Repo,
@@ -153,6 +184,7 @@ data PackageFiles = PackageFiles
   deriving stock (Show, Eq, Ord, Generic)
   deriving (FromJSON, ToJSON) via ArchLinuxJSON PackageFiles
 
+-- | Flagged package means out-of-date.
 data Flagged = Flagged | NotFlagged
   deriving stock (Show, Eq, Ord, Enum, Generic)
 
@@ -160,6 +192,7 @@ instance ToHttpApiData Flagged where
   toQueryParam Flagged = "Flagged"
   toQueryParam NotFlagged = "Not+Flagged"
 
+-- | Response data type of 'Web.ArchLinux.API.searchPackage'.
 data ArchLinuxResponse a = ArchLinuxResponse
   { _version :: Int,
     _limit :: Int,
@@ -174,6 +207,10 @@ deriving via ArchLinuxJSON (ArchLinuxResponse a) instance (ToJSON a) => ToJSON (
 
 -----------------------------------------------------------------------------
 
+-- | Search results returned by 'Web.ArchLinux.API.searchAur'.
+--
+-- Some of fileds are renamed in this record type, for sharing
+-- overloaded lenses between data type returned by Arch Linux official API.
 data AurSearch = AurSearch
   { _id :: Int,
     _name :: Text,
@@ -197,6 +234,10 @@ data AurSearch = AurSearch
   deriving stock (Show, Eq, Ord, Generic)
   deriving (FromJSON, ToJSON) via AurJSON AurSearch
 
+-- | Package details returned by 'Web.ArchLinux.API.getAurInfo'.
+--
+-- This data type extends 'AurSearch' informally,
+-- so it includes '_search' as a member.
 data AurInfo = AurInfo
   { -- | @ID, Name, PackageBaseID, ...@
     _search :: AurSearch,
@@ -212,7 +253,7 @@ data AurInfo = AurInfo
     _provides :: [Text],
     _replaces :: [Text],
     _groups :: [Text],
-    _licenses :: [Text],
+    _licenses :: [License],
     _keywords :: [Text]
   }
   deriving stock (Show, Eq, Ord, Generic)
@@ -254,15 +295,18 @@ instance ToJSON AurInfo where
       unObject (Object o) = o
       unObject _ = error "impossible"
 
+-- | Return types of AUR API.
 data AurResponseType = Search | Multiinfo | Error
   deriving stock (Show, Eq, Ord, Enum, Generic)
   deriving (FromJSON, ToJSON) via CustomJSON '[ConstructorTagModifier CamelToSnake] AurResponseType
 
+-- | Response data type of AUR API.
 data AurResponse a = AurResponse
   { _version :: Int,
     _type :: AurResponseType,
     _resultcount :: Int,
     _results :: a,
+    -- | Available when '_type' equals to 'AurResponseType.Error'.
     _error :: Maybe Text
   }
   deriving stock (Show, Eq, Ord, Functor, Generic)

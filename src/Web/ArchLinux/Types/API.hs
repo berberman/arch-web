@@ -1,4 +1,9 @@
-module Web.ArchLinux.Types.API where
+{-# OPTIONS_HADDOCK hide, prune #-}
+
+module Web.ArchLinux.Types.API
+  ( module Web.ArchLinux.Types.API,
+  )
+where
 
 import Data.Aeson (Value)
 import Data.Text (Text)
