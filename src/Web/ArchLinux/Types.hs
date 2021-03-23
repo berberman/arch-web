@@ -72,6 +72,7 @@ data Repo
   | MultilibTesting
   | Community
   | CommunityTesting
+  | KDEUnstable
   deriving stock (Show, Eq, Ord, Enum, Generic)
   deriving (FromJSON, ToJSON) via CustomJSON '[ConstructorTagModifier CamelToKebab] Repo
 
