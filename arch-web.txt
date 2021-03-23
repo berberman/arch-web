@@ -26,6 +26,7 @@ Multilib :: Repo
 MultilibTesting :: Repo
 Community :: Repo
 CommunityTesting :: Repo
+KDEUnstable :: Repo
 
 -- | Official architectures.
 data Arch
