@@ -118,7 +118,7 @@ ArchLinuxResponse :: Int -> Int -> Bool -> [a] -> ArchLinuxResponse a
 
 -- | Search results returned by <a>searchAur</a>.
 --   
---   Some of fileds are renamed in this record type, for sharing overloaded
+--   Some of fields are renamed in this record type, for sharing overloaded
 --   lenses between data type returned by Arch Linux official API.
 data AurSearch
 AurSearch :: Int -> Text -> Int -> Text -> Text -> Maybe Text -> Maybe Text -> Int -> Double -> Maybe Int -> Maybe Text -> Int -> Int -> Text -> AurSearch
