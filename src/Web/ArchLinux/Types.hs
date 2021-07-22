@@ -210,7 +210,7 @@ deriving via ArchLinuxJSON (ArchLinuxResponse a) instance (ToJSON a) => ToJSON (
 
 -- | Search results returned by 'Web.ArchLinux.API.searchAur'.
 --
--- Some of fileds are renamed in this record type, for sharing
+-- Some of fields are renamed in this record type, for sharing
 -- overloaded lenses between data type returned by Arch Linux official API.
 data AurSearch = AurSearch
   { _id :: Int,
