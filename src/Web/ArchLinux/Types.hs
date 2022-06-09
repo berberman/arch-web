@@ -94,7 +94,8 @@ data Arch
 instance ToHttpApiData Arch where
   toQueryParam = toQueryParamViaJSON
 
--- | Liceses defined in <https://archlinux.org/packages/core/any/licenses/>.
+-- | Liceses defined in <https://archlinux.org/packages/core/any/licenses/>,
+-- plus special cases listed on the wiki <https://wiki.archlinux.org/title/PKGBUILD#license>.
 data License
   = AGPL3
   | Apache
@@ -118,6 +119,12 @@ data License
   | Unlicense
   | W3C
   | ZPL
+  | BSD
+  | ISC
+  | MIT
+  | ZLIB
+  | Python
+  | OFL
   | Custom Text
   deriving stock (Show, Eq, Ord, Generic)
 
