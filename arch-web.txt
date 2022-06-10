@@ -35,7 +35,9 @@ I686 :: Arch
 X86_64 :: Arch
 
 -- | Liceses defined in
---   <a>https://archlinux.org/packages/core/any/licenses/</a>.
+--   <a>https://archlinux.org/packages/core/any/licenses/</a>, plus special
+--   cases listed on the wiki
+--   <a>https://wiki.archlinux.org/title/PKGBUILD#license</a>.
 data License
 AGPL3 :: License
 Apache :: License
@@ -59,6 +61,12 @@ RUBY :: License
 Unlicense :: License
 W3C :: License
 ZPL :: License
+BSD :: License
+ISC :: License
+MIT :: License
+ZLIB :: License
+Python :: License
+OFL :: License
 Custom :: Text -> License
 
 -- | Package details returned by <a>getPackageDetails</a>.
