@@ -1,6 +1,6 @@
 cabal-version:   2.2
 name:            arch-web
-version:         0.1.0
+version:         0.1.1
 synopsis:        Arch Linux official and AUR web interface binding
 description:
   Arch Linux official and AUR web interface binding.
@@ -19,8 +19,7 @@ extra-doc-files:
   CHANGELOG.md
   README.md
 
-tested-with:
-  GHC ==8.8.3 || ==8.8.4 || ==8.10.1 || ==8.10.2 || ==8.10.3
+tested-with:     GHC ==8.10.7 || ==9.0.2
 
 common common
   build-depends:
@@ -32,12 +31,12 @@ common common
     , http-client-tls      ^>=0.3.5
     , http-types           ^>=0.12.3
     , lens                 ^>=4.19.2 || ^>=5
-    , mtl                  ^>=2.2.2
+    , mtl
     , servant              >=0.18   && <=0.19
     , servant-client       >=0.18   && <=0.19
     , servant-client-core  >=0.18   && <=0.19
-    , text                 >=1.2.3  && <1.3 || ==2.0
-    , time                 ^>=1.9.3
+    , text
+    , time
 
   default-language:   Haskell2010
   ghc-options:
