@@ -114,10 +114,10 @@ data SearchOptions = SearchOptions
 -- > let options =
 -- >       emptySearchOptions
 -- >         & nameOrDescription ?~ "kea"
--- >         & targetRepositories .~ [Community, CommunityTesting]
+-- >         & targetRepositories .~ [Extra, ExtraTesting]
 -- > searchPackage options
 -- 
--- searchs packages whose names or descriptions contain @kea@, from @Community@ or @Community-Testing@.
+-- searchs packages whose names or descriptions contain @kea@, from @Extra@ or @Extra-Testing@.
 emptySearchOptions :: SearchOptions
 emptySearchOptions = SearchOptions Nothing Nothing Nothing [] [] Nothing Nothing Nothing
 

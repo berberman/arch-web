@@ -66,12 +66,12 @@ type AurJSON = CustomJSON '[FieldLabelModifier (StripPrefix "_", AurModifier)]
 -- | Official repositories.
 data Repo
   = Core
+  | CoreTesting
   | Extra
-  | Testing
+  | ExtraTesting
   | Multilib
   | MultilibTesting
-  | Community
-  | CommunityTesting
+  | GnomeUnstable
   | KDEUnstable
   deriving stock (Show, Eq, Ord, Enum, Generic)
   deriving (FromJSON, ToJSON) via CustomJSON '[ConstructorTagModifier CamelToKebab] Repo
