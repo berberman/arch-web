@@ -1,5 +1,9 @@
 # arch-web
 
+## 0.3
+
+Migrate to SPDX License Identifiers
+
 ## 0.2
 
 * Allow lens 5.1/5.2, aeson 2.1, servant 0.19.1+

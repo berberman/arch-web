@@ -1,6 +1,6 @@
 cabal-version:   2.2
 name:            arch-web
-version:         0.2
+version:         0.3
 synopsis:        Arch Linux official and AUR web interface binding
 description:
   Arch Linux official and AUR web interface binding.
@@ -23,18 +23,18 @@ tested-with:     GHC ==8.10.7 || ==9.0.2
 
 common common
   build-depends:
-    , aeson                ^>=1.5.4 || ^>=2.0 || ^>=2.1 || ^>=2.2
-    , base                 >=4.10   && <5
+    , aeson                ^>=1.5.4  || ^>=2.0   || ^>=2.1 || ^>=2.2
+    , base                 >=4.10    && <5
     , deriving-aeson       ^>=0.2.6
     , exceptions           ^>=0.10.4
-    , http-client          ^>=0.6.4 || ^>=0.7.4
+    , http-client          ^>=0.6.4  || ^>=0.7.4
     , http-client-tls      ^>=0.3.5
     , http-types           ^>=0.12.3
-    , lens                 ^>=4.19.2 || ^>=5 || ^>=5.1 || ^>=5.2
+    , lens                 ^>=4.19.2 || ^>=5     || ^>=5.1 || ^>=5.2
     , mtl
-    , servant              >=0.18   && <0.21
-    , servant-client       >=0.18   && <0.21
-    , servant-client-core  >=0.18   && <0.21
+    , servant              >=0.18    && <0.21
+    , servant-client       >=0.18    && <0.21
+    , servant-client-core  >=0.18    && <0.21
     , text
     , time
 
@@ -56,7 +56,6 @@ common common
     ghc-options: -Wmissing-deriving-strategies
 
   default-extensions:
-    NoStarIsType
     ConstraintKinds
     DataKinds
     DeriveAnyClass
@@ -69,6 +68,7 @@ common common
     FunctionalDependencies
     KindSignatures
     LambdaCase
+    NoStarIsType
     OverloadedStrings
     RecordWildCards
     ScopedTypeVariables
