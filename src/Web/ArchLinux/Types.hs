@@ -178,11 +178,11 @@ data License
   | LGPL_3_0_only
   | LGPL_3_0_or_later
   | LGPLLR
-  | LPL_1_0
-  | LPL_1_1
-  | LPL_1_2
-  | LPL_1_3a
-  | LPL_1_3c
+  | LPPL_1_0
+  | LPPL_1_1
+  | LPPL_1_2
+  | LPPL_1_3a
+  | LPPL_1_3c
   | MPL_1_0
   | MPL_1_1
   | MPL_2_0
@@ -280,11 +280,11 @@ licenseId LGPL_2_1_or_later = "LGPL-2.1-or-later"
 licenseId LGPL_3_0_only = "LGPL-3.0-only"
 licenseId LGPL_3_0_or_later = "LGPL-3.0-or-later"
 licenseId LGPLLR = "LGPLLR"
-licenseId LPL_1_0 = "LPL-1.0"
-licenseId LPL_1_1 = "LPL-1.1"
-licenseId LPL_1_2 = "LPL-1.2"
-licenseId LPL_1_3a = "LPL-1.3a"
-licenseId LPL_1_3c = "LPL-1.3c"
+licenseId LPPL_1_0 = "LPPL-1.0"
+licenseId LPPL_1_1 = "LPPL-1.1"
+licenseId LPPL_1_2 = "LPPL-1.2"
+licenseId LPPL_1_3a = "LPPL-1.3a"
+licenseId LPPL_1_3c = "LPPL-1.3c"
 licenseId MPL_1_0 = "MPL-1.0"
 licenseId MPL_1_1 = "MPL-1.1"
 licenseId MPL_2_0 = "MPL-2.0"
@@ -381,11 +381,11 @@ parseLicense "LGPL-2.1-or-later" = LGPL_2_1_or_later
 parseLicense "LGPL-3.0-only" = LGPL_3_0_only
 parseLicense "LGPL-3.0-or-later" = LGPL_3_0_or_later
 parseLicense "LGPLLR" = LGPLLR
-parseLicense "LPL-1.0" = LPL_1_0
-parseLicense "LPL-1.1" = LPL_1_1
-parseLicense "LPL-1.2" = LPL_1_2
-parseLicense "LPL-1.3a" = LPL_1_3a
-parseLicense "LPL-1.3c" = LPL_1_3c
+parseLicense "LPPL-1.0" = LPPL_1_0
+parseLicense "LPPL-1.1" = LPPL_1_1
+parseLicense "LPPL-1.2" = LPPL_1_2
+parseLicense "LPPL-1.3a" = LPPL_1_3a
+parseLicense "LPPL-1.3c" = LPPL_1_3c
 parseLicense "MPL-1.0" = MPL_1_0
 parseLicense "MPL-1.1" = MPL_1_1
 parseLicense "MPL-2.0" = MPL_2_0
