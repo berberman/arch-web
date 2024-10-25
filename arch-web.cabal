@@ -1,6 +1,6 @@
 cabal-version:   2.2
 name:            arch-web
-version:         0.3
+version:         0.3.1
 synopsis:        Arch Linux official and AUR web interface binding
 description:
   Arch Linux official and AUR web interface binding.

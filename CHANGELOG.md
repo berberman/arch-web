@@ -1,5 +1,9 @@
 # arch-web
 
+## 0.3.1
+
+Fix typo in license
+
 ## 0.3
 
 Migrate to SPDX License Identifiers
