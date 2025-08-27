@@ -1,7 +1,6 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
-{-# OPTIONS_GHC -ddump-splices #-}
 
 -- | Copyright: (c) 2021 berberman
 -- SPDX-License-Identifier: MIT
