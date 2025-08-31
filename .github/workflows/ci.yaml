@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        ghc: ["9.8", "9.2", "9.0", "8.10"]
+        ghc: ["9.8", "9.2"]
         os: [ubuntu-latest]
 
     name: ${{ matrix.os }} - GHC ${{ matrix.ghc }}
