@@ -1,5 +1,11 @@
 # arch-web
 
+# 0.3.2
+
+* Use template haskell to generate SPDX license data type based on `data/KNOWN-SPDX.json`
+* Remove some dependency bounds
+* Breaking change: `licenseId (Custom "x")` now returns `"x"` instead of `"custom: x"`. This ensures that `licenseId (parseLicense x) == x` for all `x`.
+
 ## 0.3.1
 
 Fix typo in license
