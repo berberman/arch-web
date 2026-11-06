@@ -43,6 +43,7 @@ type SearchPackage =
 
 type AurRPC =
   "rpc"
+    :> Header' '[Strict, Required] "User-Agent" Text
     :> QueryParam' '[Strict, Required] "v" Int
     :> QueryParam' '[Strict, Required] "type" Text
     :> QueryParam "by" Text

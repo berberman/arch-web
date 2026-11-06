@@ -184,7 +184,8 @@ searchTypeToValue = \case
   ByCheckdepends -> "checkdepends"
 
 aurRPC :: Text -> Maybe Text -> [Text] -> ClientM Value
-aurRPC = client (Proxy @AurRPC) 5
+-- AUR's Anubis protection rejects requests without a User-Agent.
+aurRPC = client (Proxy @AurRPC) "arch-web" 5
 
 -- This is evil and cheating!!
 -- Use this to report delayed json decode error in 'HttpClientError'
