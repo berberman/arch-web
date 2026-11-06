@@ -3,12 +3,16 @@ on:
   push:
     branches: [master]
 name: build
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        ghc: ["9.8", "9.2"]
+        ghc: ["9.12", "9.10", "9.8", "9.6"]
         os: [ubuntu-latest]
 
     name: ${{ matrix.os }} - GHC ${{ matrix.ghc }}
@@ -32,7 +36,7 @@ jobs:
 
       - name: Configure the build
         run: |
-          cabal configure --enable-tests
+          cabal configure --enable-tests --disable-documentation
           cabal build all --dry-run
 
       - name: Restore cached dependencies
@@ -45,16 +49,15 @@ jobs:
           key: ${{ env.key }}-plan-${{ hashFiles('**/plan.json') }}
           restore-keys: ${{ env.key }}-
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: cabal build all --only-dependencies
 
       - name: Save cached dependencies
         uses: actions/cache/save@v4
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: ${{ steps.cache.outputs.cache-primary-key != steps.cache.outputs.cache-matched-key }}
         with:
           path: ${{ steps.setup.outputs.cabal-store }}
           key: ${{ steps.cache.outputs.cache-primary-key }}
-      - name: Build and run tests
-        run: |
-          cabal build
-          cabal test
+      - name: Build
+        run: cabal build all
+      - name: Test
+        run: cabal test all --test-show-details=direct

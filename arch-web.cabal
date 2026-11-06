@@ -20,7 +20,7 @@ extra-doc-files:
   CHANGELOG.md
   README.md
 
-tested-with:        GHC ==9.2.8 || ==9.8.4
+tested-with:        GHC ==9.6.7 || ==9.8.4 || ==9.10.3 || ==9.12.4
 
 common common
   build-depends:
