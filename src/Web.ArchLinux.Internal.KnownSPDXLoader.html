@@ -1,0 +1,277 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><link rel="stylesheet" type="text/css" href="style.css" /><script type="text/javascript" src="highlight.js"></script></head><body><pre><span class="hs-pragma">{-# LANGUAGE TemplateHaskellQuotes #-}</span><span>
+</span><span id="line-2"></span><span>
+</span><span id="line-3"></span><span class="hs-keyword">module</span><span> </span><span class="hs-identifier">Web.ArchLinux.Internal.KnownSPDXLoader</span><span> </span><span class="hs-special">(</span><span class="annot"><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#loadKnownSPDX"><span class="hs-identifier">loadKnownSPDX</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-keyword">where</span><span>
+</span><span id="line-4"></span><span>
+</span><span id="line-5"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Aeson</span></span><span>
+</span><span id="line-6"></span><span class="hs-keyword">import</span><span> </span><span class="hs-keyword">qualified</span><span> </span><span class="annot"><span class="hs-identifier">Data.ByteString</span></span><span> </span><span class="hs-keyword">as</span><span> </span><span class="annot"><span class="hs-identifier">BS</span></span><span>
+</span><span id="line-7"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Data.Map.Strict</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Map</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier">toList</span></span><span class="hs-special">)</span><span>
+</span><span id="line-8"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">GHC.Generics</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">Generic</span></span><span class="hs-special">)</span><span>
+</span><span id="line-9"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">Language.Haskell.TH</span></span><span>
+</span><span id="line-10"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">System.Directory</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier">getCurrentDirectory</span></span><span class="hs-special">)</span><span>
+</span><span id="line-11"></span><span class="hs-keyword">import</span><span> </span><span class="annot"><span class="hs-identifier">System.FilePath</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="hs-operator">(&lt;/&gt;)</span></span><span class="hs-special">)</span><span>
+</span><span id="line-12"></span><span>
+</span><span id="line-13"></span><span class="hs-comment">-- | Load the KNOWN_SPDX.json file at compile time and generate data type 'License', and</span><span>
+</span><span id="line-14"></span><span class="hs-comment">-- functions 'parseLicense' and 'licenseId'. If the license string is not known, 'parseLicense'</span><span>
+</span><span id="line-15"></span><span class="hs-comment">-- will return 'Custom' with the original string, and 'licenseId' will return the original string</span><span>
+</span><span id="line-16"></span><span class="hs-comment">-- for 'Custom' licenses.</span><span>
+</span><span id="line-17"></span><span class="annot"><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#loadKnownSPDX"><span class="hs-identifier hs-type">loadKnownSPDX</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="annot"><span class="hs-identifier hs-type">DecsQ</span></span><span>
+</span><span id="line-18"></span><span id="loadKnownSPDX"><span class="annot"><span class="annottext">loadKnownSPDX :: DecsQ
+</span><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#loadKnownSPDX"><span class="hs-identifier hs-var hs-var">loadKnownSPDX</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">do</span><span>
+</span><span id="line-19"></span><span>  </span><span id="local-6989586621679877920"><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679877920"><span class="hs-identifier hs-var">txt</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">IO ByteString -&gt; Q ByteString
+forall a. IO a -&gt; Q a
+</span><span class="hs-identifier hs-var">runIO</span></span><span> </span><span class="annot"><span class="annottext">(IO ByteString -&gt; Q ByteString) -&gt; IO ByteString -&gt; Q ByteString
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">IO String
+</span><span class="hs-identifier hs-var">getCurrentDirectory</span></span><span> </span><span class="annot"><span class="annottext">IO String -&gt; (String -&gt; IO ByteString) -&gt; IO ByteString
+forall a b. IO a -&gt; (a -&gt; IO b) -&gt; IO b
+forall (m :: Type -&gt; Type) a b. Monad m =&gt; m a -&gt; (a -&gt; m b) -&gt; m b
+</span><span class="hs-operator hs-var">&gt;&gt;=</span></span><span> </span><span class="hs-glyph">\</span><span id="local-6989586621679877922"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679877922"><span class="hs-identifier hs-var">dot</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; IO ByteString
+</span><span class="hs-identifier hs-var">BS.readFile</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; IO ByteString) -&gt; String -&gt; IO ByteString
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679877922"><span class="hs-identifier hs-var">dot</span></a></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><span class="hs-operator hs-var">&lt;/&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;data&quot;</span></span><span> </span><span class="annot"><span class="annottext">String -&gt; String -&gt; String
+</span><span class="hs-operator hs-var">&lt;/&gt;</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;KNOWN_SPDX.json&quot;</span></span><span>
+</span><span id="line-20"></span><span>  </span><span class="hs-keyword">let</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Map String String -&gt; [(String, String)]
+forall k a. Map k a -&gt; [(k, a)]
+</span><span class="hs-identifier hs-var">toList</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span id="local-6989586621679877924"><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877924"><span class="hs-identifier hs-var">src</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-keyword">case</span><span> </span><span class="annot"><span class="annottext">forall a. FromJSON a =&gt; ByteString -&gt; Maybe a
+</span><span class="hs-identifier hs-var">decodeStrict</span></span><span> </span><span class="hs-glyph">@</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">Map</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">ByteString
+</span><a href="#local-6989586621679877920"><span class="hs-identifier hs-var">txt</span></a></span><span> </span><span class="hs-keyword">of</span><span>
+</span><span id="line-21"></span><span>        </span><span class="annot"><span class="hs-identifier hs-type">Just</span></span><span> </span><span id="local-6989586621679877926"><span class="annot"><span class="annottext">Map String String
+</span><a href="#local-6989586621679877926"><span class="hs-identifier hs-var">x</span></a></span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">Map String String
+</span><a href="#local-6989586621679877926"><span class="hs-identifier hs-var">x</span></a></span><span>
+</span><span id="line-22"></span><span>        </span><span class="annot"><span class="annottext">Maybe (Map String String)
+</span><span class="hs-identifier">_</span></span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="annottext">String -&gt; Map String String
+forall a. HasCallStack =&gt; String -&gt; a
+</span><span class="hs-identifier hs-var">error</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Failed to parse json&quot;</span></span><span>
+</span><span id="line-23"></span><span>  </span><span id="local-6989586621679877928"><span class="annot"><span class="annottext">Dec
+</span><a href="#local-6989586621679877928"><span class="hs-identifier hs-var">dec1</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[(String, String)] -&gt; DecQ
+</span><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genData"><span class="hs-identifier hs-var">genData</span></a></span><span> </span><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877924"><span class="hs-identifier hs-var">src</span></a></span><span>
+</span><span id="line-24"></span><span>  </span><span id="local-6989586621679877930"><span class="annot"><span class="annottext">Dec
+</span><a href="#local-6989586621679877930"><span class="hs-identifier hs-var">dec2</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[(String, String)] -&gt; DecQ
+</span><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genParse"><span class="hs-identifier hs-var">genParse</span></a></span><span> </span><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877924"><span class="hs-identifier hs-var">src</span></a></span><span>
+</span><span id="line-25"></span><span>  </span><span id="local-6989586621679877932"><span class="annot"><span class="annottext">Dec
+</span><a href="#local-6989586621679877932"><span class="hs-identifier hs-var">dec3</span></a></span></span><span> </span><span class="hs-glyph">&lt;-</span><span> </span><span class="annot"><span class="annottext">[(String, String)] -&gt; DecQ
+</span><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genId"><span class="hs-identifier hs-var">genId</span></a></span><span> </span><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877924"><span class="hs-identifier hs-var">src</span></a></span><span>
+</span><span id="line-26"></span><span>  </span><span class="annot"><span class="annottext">[Dec] -&gt; DecsQ
+forall a. a -&gt; Q a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Dec
+</span><a href="#local-6989586621679877928"><span class="hs-identifier hs-var">dec1</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Dec
+</span><a href="#local-6989586621679877930"><span class="hs-identifier hs-var">dec2</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Dec
+</span><a href="#local-6989586621679877932"><span class="hs-identifier hs-var">dec3</span></a></span><span class="hs-special">]</span><span>
+</span><span id="line-27"></span><span>
+</span><span id="line-28"></span><span class="annot"><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genData"><span class="hs-identifier hs-type">genData</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">DecQ</span></span><span>
+</span><span id="line-29"></span><span id="genData"><span class="annot"><span class="annottext">genData :: [(String, String)] -&gt; DecQ
+</span><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genData"><span class="hs-identifier hs-var hs-var">genData</span></a></span></span><span> </span><span id="local-6989586621679877934"><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877934"><span class="hs-identifier hs-var">src</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Q Cxt
+-&gt; Name
+-&gt; [Q (TyVarBndr BndrVis)]
+-&gt; Maybe (Q Kind)
+-&gt; [(Q Con, Maybe String, [Maybe String])]
+-&gt; [Q DerivClause]
+-&gt; Maybe String
+-&gt; DecQ
+</span><span class="hs-identifier hs-var">dataD_doc</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Cxt -&gt; Q Cxt
+forall a. a -&gt; Q a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;License&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span> </span><span class="annot"><span class="annottext">Maybe (Q Kind)
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(Q Con, Maybe String, [Maybe String])
+forall {a} {a}. (Q Con, Maybe a, [a])
+</span><a href="#local-6989586621679877936"><span class="hs-identifier hs-var">customCon</span></a></span><span> </span><span class="annot"><span class="annottext">(Q Con, Maybe String, [Maybe String])
+-&gt; [(Q Con, Maybe String, [Maybe String])]
+-&gt; [(Q Con, Maybe String, [Maybe String])]
+forall a. a -&gt; [a] -&gt; [a]
+</span><span class="hs-glyph hs-var">:</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">(String, String) -&gt; (Q Con, Maybe String, [Maybe String])
+forall {m :: Type -&gt; Type} {f :: Type -&gt; Type} {a}.
+(Quote m, Applicative f) =&gt;
+(String, String) -&gt; (m Con, f String, [a])
+</span><a href="#local-6989586621679877937"><span class="hs-identifier hs-var">genCon</span></a></span><span> </span><span class="annot"><span class="annottext">((String, String) -&gt; (Q Con, Maybe String, [Maybe String]))
+-&gt; [(String, String)] -&gt; [(Q Con, Maybe String, [Maybe String])]
+forall (f :: Type -&gt; Type) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877934"><span class="hs-identifier hs-var">src</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Q DerivClause]
+</span><a href="#local-6989586621679877939"><span class="hs-identifier hs-var">drv</span></a></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Maybe String
+forall a. a -&gt; Maybe a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;SPDX License Identifiers included in @/usr/share/licenses/known_spdx_license_identifiers.txt@ of package &lt;https://archlinux.org/packages/core/any/licenses/&gt;.&quot;</span></span><span class="hs-special">)</span><span>
+</span><span id="line-30"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-31"></span><span>    </span><span id="local-6989586621679877936"><span class="annot"><span class="annottext">customCon :: (Q Con, Maybe a, [a])
+</span><a href="#local-6989586621679877936"><span class="hs-identifier hs-var hs-var">customCon</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; [Q BangType] -&gt; Q Con
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+Name -&gt; [m BangType] -&gt; m Con
+</span><span class="hs-identifier hs-var">normalC</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Custom&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Q Bang -&gt; Q Kind -&gt; Q BangType
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+m Bang -&gt; m Kind -&gt; m BangType
+</span><span class="hs-identifier hs-var">bangType</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Q SourceUnpackedness -&gt; Q SourceStrictness -&gt; Q Bang
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+m SourceUnpackedness -&gt; m SourceStrictness -&gt; m Bang
+</span><span class="hs-identifier hs-var">bang</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SourceUnpackedness -&gt; Q SourceUnpackedness
+forall a. a -&gt; Q a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">SourceUnpackedness
+</span><span class="hs-identifier hs-var">NoSourceUnpackedness</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">SourceStrictness -&gt; Q SourceStrictness
+forall a. a -&gt; Q a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">SourceStrictness
+</span><span class="hs-identifier hs-var">NoSourceStrictness</span></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">[t|</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">|]</span><span class="hs-special">]</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">Maybe a
+forall a. Maybe a
+</span><span class="hs-identifier hs-var">Nothing</span></span><span class="hs-special">,</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-32"></span><span>    </span><span id="local-6989586621679877937"><span class="annot"><span class="annottext">genCon :: (String, String) -&gt; (m Con, f String, [a])
+</span><a href="#local-6989586621679877937"><span class="hs-identifier hs-var hs-var">genCon</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679877968"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679877968"><span class="hs-identifier hs-var">from</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679877969"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679877969"><span class="hs-identifier hs-var">to</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Name -&gt; [m BangType] -&gt; m Con
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+Name -&gt; [m BangType] -&gt; m Con
+</span><span class="hs-identifier hs-var">normalC</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679877969"><span class="hs-identifier hs-var">to</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">String -&gt; f String
+forall a. a -&gt; f a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">(String -&gt; f String) -&gt; String -&gt; f String
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">[String] -&gt; String
+</span><span class="hs-identifier hs-var">unwords</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;@&quot;</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679877968"><span class="hs-identifier hs-var">from</span></a></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;@&quot;</span></span><span class="hs-special">]</span><span class="hs-special">,</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">)</span><span>
+</span><span id="line-33"></span><span>    </span><span id="local-6989586621679877939"><span class="annot"><span class="annottext">drv :: [Q DerivClause]
+</span><a href="#local-6989586621679877939"><span class="hs-identifier hs-var hs-var">drv</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Maybe DerivStrategy -&gt; [Q Kind] -&gt; Q DerivClause
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+Maybe DerivStrategy -&gt; [m Kind] -&gt; m DerivClause
+</span><span class="hs-identifier hs-var">derivClause</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">DerivStrategy -&gt; Maybe DerivStrategy
+forall a. a -&gt; Maybe a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">DerivStrategy
+</span><span class="hs-identifier hs-var">StockStrategy</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">[t|</span><span class="annot"><span class="hs-identifier hs-type">Show</span></span><span class="hs-special">|]</span><span class="hs-special">,</span><span> </span><span class="hs-special">[t|</span><span class="annot"><span class="hs-identifier hs-type">Eq</span></span><span class="hs-special">|]</span><span class="hs-special">,</span><span> </span><span class="hs-special">[t|</span><span class="annot"><span class="hs-identifier hs-type">Ord</span></span><span class="hs-special">|]</span><span class="hs-special">,</span><span> </span><span class="hs-special">[t|</span><span class="annot"><span class="hs-identifier hs-type">Generic</span></span><span class="hs-special">|]</span><span class="hs-special">]</span><span class="hs-special">]</span><span>
+</span><span id="line-34"></span><span>
+</span><span id="line-35"></span><span class="annot"><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genParse"><span class="hs-identifier hs-type">genParse</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">DecQ</span></span><span>
+</span><span id="line-36"></span><span id="genParse"><span class="annot"><span class="annottext">genParse :: [(String, String)] -&gt; DecQ
+</span><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genParse"><span class="hs-identifier hs-var hs-var">genParse</span></a></span></span><span> </span><span id="local-6989586621679877982"><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877982"><span class="hs-identifier hs-var">src</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Name -&gt; [Q Clause] -&gt; Maybe String -&gt; [Maybe String] -&gt; DecQ
+</span><span class="hs-identifier hs-var">funD_doc</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;parseLicense&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(String, String) -&gt; Q Clause
+forall {m :: Type -&gt; Type}. Quote m =&gt; (String, String) -&gt; m Clause
+</span><a href="#local-6989586621679877984"><span class="hs-identifier hs-var">genClause</span></a></span><span> </span><span class="annot"><span class="annottext">((String, String) -&gt; Q Clause) -&gt; [(String, String)] -&gt; [Q Clause]
+forall (f :: Type -&gt; Type) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679877982"><span class="hs-identifier hs-var">src</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Q Clause] -&gt; [Q Clause] -&gt; [Q Clause]
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Q Clause
+</span><a href="#local-6989586621679877985"><span class="hs-identifier hs-var">custom</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Maybe String
+forall a. a -&gt; Maybe a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Parse a SPDX license identifier. If the identifier is not known, return 'Custom' with the original string.&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-37"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-38"></span><span>    </span><span id="local-6989586621679877985"><span class="annot"><span class="annottext">custom :: Q Clause
+</span><a href="#local-6989586621679877985"><span class="hs-identifier hs-var hs-var">custom</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Q Pat] -&gt; Q Body -&gt; [DecQ] -&gt; Q Clause
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+[m Pat] -&gt; m Body -&gt; [m Dec] -&gt; m Clause
+</span><span class="hs-identifier hs-var">clause</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Name -&gt; Q Pat
+forall (m :: Type -&gt; Type). Quote m =&gt; Name -&gt; m Pat
+</span><span class="hs-identifier hs-var">varP</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;s&quot;</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Q Exp -&gt; Q Body
+forall (m :: Type -&gt; Type). Quote m =&gt; m Exp -&gt; m Body
+</span><span class="hs-identifier hs-var">normalB</span></span><span> </span><span class="hs-special">[|</span><span class="annot"><span class="hs-identifier">Custom</span></span><span> </span><span class="annot"><span class="hs-identifier">s</span></span><span class="hs-special">|]</span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-39"></span><span>    </span><span id="local-6989586621679877984"><span class="annot"><span class="annottext">genClause :: (String, String) -&gt; m Clause
+</span><a href="#local-6989586621679877984"><span class="hs-identifier hs-var hs-var">genClause</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679878004"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878004"><span class="hs-identifier hs-var">from</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679878005"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878005"><span class="hs-identifier hs-var">to</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[m Pat] -&gt; m Body -&gt; [m Dec] -&gt; m Clause
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+[m Pat] -&gt; m Body -&gt; [m Dec] -&gt; m Clause
+</span><span class="hs-identifier hs-var">clause</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Lit -&gt; m Pat
+forall (m :: Type -&gt; Type). Quote m =&gt; Lit -&gt; m Pat
+</span><span class="hs-identifier hs-var">litP</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Lit
+</span><span class="hs-identifier hs-var">StringL</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878004"><span class="hs-identifier hs-var">from</span></a></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">m Exp -&gt; m Body
+forall (m :: Type -&gt; Type). Quote m =&gt; m Exp -&gt; m Body
+</span><span class="hs-identifier hs-var">normalB</span></span><span> </span><span class="annot"><span class="annottext">(m Exp -&gt; m Body) -&gt; m Exp -&gt; m Body
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Name -&gt; m Exp
+forall (m :: Type -&gt; Type). Quote m =&gt; Name -&gt; m Exp
+</span><span class="hs-identifier hs-var">conE</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878005"><span class="hs-identifier hs-var">to</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-40"></span><span>
+</span><span id="line-41"></span><span class="annot"><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genId"><span class="hs-identifier hs-type">genId</span></a></span><span> </span><span class="hs-glyph">::</span><span> </span><span class="hs-special">[</span><span class="hs-special">(</span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">,</span><span> </span><span class="annot"><span class="hs-identifier hs-type">String</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span> </span><span class="hs-glyph">-&gt;</span><span> </span><span class="annot"><span class="hs-identifier hs-type">DecQ</span></span><span>
+</span><span id="line-42"></span><span id="genId"><span class="annot"><span class="annottext">genId :: [(String, String)] -&gt; DecQ
+</span><a href="Web.ArchLinux.Internal.KnownSPDXLoader.html#genId"><span class="hs-identifier hs-var hs-var">genId</span></a></span></span><span> </span><span id="local-6989586621679878007"><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679878007"><span class="hs-identifier hs-var">src</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">Name -&gt; [Q Clause] -&gt; Maybe String -&gt; [Maybe String] -&gt; DecQ
+</span><span class="hs-identifier hs-var">funD_doc</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;licenseId&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="hs-special">(</span><span class="annot"><span class="annottext">(String, String) -&gt; Q Clause
+forall {m :: Type -&gt; Type}. Quote m =&gt; (String, String) -&gt; m Clause
+</span><a href="#local-6989586621679878008"><span class="hs-identifier hs-var">genClause</span></a></span><span> </span><span class="annot"><span class="annottext">((String, String) -&gt; Q Clause) -&gt; [(String, String)] -&gt; [Q Clause]
+forall (f :: Type -&gt; Type) a b. Functor f =&gt; (a -&gt; b) -&gt; f a -&gt; f b
+</span><span class="hs-operator hs-var">&lt;$&gt;</span></span><span> </span><span class="annot"><span class="annottext">[(String, String)]
+</span><a href="#local-6989586621679878007"><span class="hs-identifier hs-var">src</span></a></span><span class="hs-special">)</span><span> </span><span class="annot"><span class="annottext">[Q Clause] -&gt; [Q Clause] -&gt; [Q Clause]
+forall a. Semigroup a =&gt; a -&gt; a -&gt; a
+</span><span class="hs-operator hs-var">&lt;&gt;</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Q Clause
+</span><a href="#local-6989586621679878009"><span class="hs-identifier hs-var">custom</span></a></span><span class="hs-special">]</span><span class="hs-special">)</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Maybe String
+forall a. a -&gt; Maybe a
+forall (f :: Type -&gt; Type) a. Applicative f =&gt; a -&gt; f a
+</span><span class="hs-identifier hs-var">pure</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Get the SPDX license identifier. If the license is 'Custom', return the original string.&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-43"></span><span>  </span><span class="hs-keyword">where</span><span>
+</span><span id="line-44"></span><span>    </span><span id="local-6989586621679878009"><span class="annot"><span class="annottext">custom :: Q Clause
+</span><a href="#local-6989586621679878009"><span class="hs-identifier hs-var hs-var">custom</span></a></span></span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[Q Pat] -&gt; Q Body -&gt; [DecQ] -&gt; Q Clause
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+[m Pat] -&gt; m Body -&gt; [m Dec] -&gt; m Clause
+</span><span class="hs-identifier hs-var">clause</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Name -&gt; [Q Pat] -&gt; Q Pat
+forall (m :: Type -&gt; Type). Quote m =&gt; Name -&gt; [m Pat] -&gt; m Pat
+</span><span class="hs-identifier hs-var">conP</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;Custom&quot;</span></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Name -&gt; Q Pat
+forall (m :: Type -&gt; Type). Quote m =&gt; Name -&gt; m Pat
+</span><span class="hs-identifier hs-var">varP</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><span class="hs-string">&quot;s&quot;</span></span><span class="hs-special">)</span><span class="hs-special">]</span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">Q Exp -&gt; Q Body
+forall (m :: Type -&gt; Type). Quote m =&gt; m Exp -&gt; m Body
+</span><span class="hs-identifier hs-var">normalB</span></span><span> </span><span class="hs-special">[|</span><span class="annot"><span class="hs-identifier">s</span></span><span class="hs-special">|]</span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-45"></span><span>    </span><span id="local-6989586621679878008"><span class="annot"><span class="annottext">genClause :: (String, String) -&gt; m Clause
+</span><a href="#local-6989586621679878008"><span class="hs-identifier hs-var hs-var">genClause</span></a></span></span><span> </span><span class="hs-special">(</span><span id="local-6989586621679878030"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878030"><span class="hs-identifier hs-var">from</span></a></span></span><span class="hs-special">,</span><span> </span><span id="local-6989586621679878031"><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878031"><span class="hs-identifier hs-var">to</span></a></span></span><span class="hs-special">)</span><span> </span><span class="hs-glyph">=</span><span> </span><span class="annot"><span class="annottext">[m Pat] -&gt; m Body -&gt; [m Dec] -&gt; m Clause
+forall (m :: Type -&gt; Type).
+Quote m =&gt;
+[m Pat] -&gt; m Body -&gt; [m Dec] -&gt; m Clause
+</span><span class="hs-identifier hs-var">clause</span></span><span> </span><span class="hs-special">[</span><span class="annot"><span class="annottext">Name -&gt; [m Pat] -&gt; m Pat
+forall (m :: Type -&gt; Type). Quote m =&gt; Name -&gt; [m Pat] -&gt; m Pat
+</span><span class="hs-identifier hs-var">conP</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Name
+</span><span class="hs-identifier hs-var">mkName</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878031"><span class="hs-identifier hs-var">to</span></a></span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span class="hs-special">]</span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">m Exp -&gt; m Body
+forall (m :: Type -&gt; Type). Quote m =&gt; m Exp -&gt; m Body
+</span><span class="hs-identifier hs-var">normalB</span></span><span> </span><span class="annot"><span class="annottext">(m Exp -&gt; m Body) -&gt; m Exp -&gt; m Body
+forall a b. (a -&gt; b) -&gt; a -&gt; b
+</span><span class="hs-operator hs-var">$</span></span><span> </span><span class="annot"><span class="annottext">Lit -&gt; m Exp
+forall (m :: Type -&gt; Type). Quote m =&gt; Lit -&gt; m Exp
+</span><span class="hs-identifier hs-var">litE</span></span><span> </span><span class="hs-special">(</span><span class="annot"><span class="annottext">String -&gt; Lit
+</span><span class="hs-identifier hs-var">StringL</span></span><span> </span><span class="annot"><span class="annottext">String
+</span><a href="#local-6989586621679878030"><span class="hs-identifier hs-var">from</span></a></span><span class="hs-special">)</span><span class="hs-special">)</span><span> </span><span class="hs-special">[</span><span class="hs-special">]</span><span>
+</span><span id="line-46"></span></pre></body></html>
