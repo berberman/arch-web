@@ -1,6 +1,13 @@
 # arch-web
 
-# 0.3.2
+## 0.3.3
+
+* Send a User-Agent with AUR RPC requests so Anubis accepts them.
+* Support `http-client-tls` 0.4.
+* Update the tested GHC versions to 9.6, 9.8, 9.10, and 9.12.
+* Fix documentation publishing and allow CI to disable duplicate Haddock generation.
+
+## 0.3.2
 
 * Use template haskell to generate SPDX license data type based on `data/KNOWN-SPDX.json`
 * Remove some dependency bounds
